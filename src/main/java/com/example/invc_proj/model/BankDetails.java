@@ -1,10 +1,7 @@
 package com.example.invc_proj.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,14 +11,13 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 public class BankDetails {
 
     @Getter
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bd_id", unique = true, nullable = false)
-    private int bn_id;
+    private int bd_id;
     private String account_holder_name;
     private String bank_name;
     private String branch;

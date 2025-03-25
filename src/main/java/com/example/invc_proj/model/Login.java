@@ -3,7 +3,7 @@ package com.example.invc_proj.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+//@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

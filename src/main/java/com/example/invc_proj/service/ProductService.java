@@ -3,6 +3,7 @@ package com.example.invc_proj.service;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,20 +52,11 @@ public class ProductService {
     return repository_clnt.findAll();
   }
 
-    public List<BankDetails> getAllBankDetails()
-  {
-    return repository_bnk.findAll();
-  }
 
     public  List<Invoice> getAllInvoices() { return repository_invc.findAll(); }
 
     public  List<ServicesRequested> getAllServicesRequested()
             { return repository_invc_srvc.findAll(); }
-
-
-
-
-
 
 
     public Optional<Services> getServiceById(int id)
@@ -74,18 +66,6 @@ public class ProductService {
     }
 
 
-    public Optional<Client> getClientById(int id)
-    {
-      System.out.println("get by id"+id);
-       return repository_clnt.findById(id);
-
-    }
-    public Optional<BankDetails> getBankDetailsById(int id)
-    {
-      System.out.println("get by id"+id);
-      return repository_bnk.findById(id);
-    }
-
     public Optional<ServicesRequested> getServicesRequestedByInvoice(int invoiceId)
     {
       System.out.println("get by id"+invoiceId);
@@ -93,19 +73,8 @@ public class ProductService {
     }
 
 
-
   public void addServices(Services srvc) {
     repository_srvc.save(srvc);
-  }
-
-  public void addClients(Client clnt)
-  {
-    repository_clnt.save(clnt);
-  }
-
-  public void addBankDetails(BankDetails bnk)
-  {
-    repository_bnk.save(bnk);
   }
 
   public void  CreateInvoice(Invoice invc)  { repository_invc.save(invc); }
@@ -116,29 +85,6 @@ public class ProductService {
     repository_invc_srvc.save(invc_srvc);
 
   }
-
-  public String Login(Login userLogin)
-  {
-    /*int user_id;
-    if (userLogin.getUser_id()=0)
-    {
-      return "user_does_exists" ;
-
-    }
-    else
-    {
-      //user_id = Integer.parseInt(userLogin.getUser_id());
-      return "user_doesn't exists: "+user_id;
-    }
-    */
-    return "user_does_exists" ;
-  }
-
- /* public Integer getInvoiceId()
-  {
-    return 1;
-  }
-*/
 
  public Integer getInvoiceId(String seq_invoice_id)
   {

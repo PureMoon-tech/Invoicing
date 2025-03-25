@@ -1,13 +1,13 @@
 package com.example.invc_proj.model;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 
 public class BankDetailsDropDown {
 
@@ -31,4 +31,7 @@ public class BankDetailsDropDown {
         public void setBank_name(String bank_name) {
                 this.bank_name = bank_name;
         }
+
+        public void setAccount_holder_name(String account_holder_name)
+        {this.account_holder_name = account_holder_name;}
 }
