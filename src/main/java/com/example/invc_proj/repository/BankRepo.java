@@ -13,8 +13,12 @@ import java.util.List;
 @Repository
 public interface BankRepo extends JpaRepository<BankDetails, Integer> {
 
-    @Query("SELECT new com.example.invc_proj.dto.BankDropdownDTO(b.bd_id,b.bank_name,b.account_no," +
-            " b.account_holder_name) " + "FROM bank_Details b")
-    ResponseEntity<BankDropdownDTO> findClientsForDropdown();
+   /* @Query("SELECT new com.example.invc_proj.dto.BankDropdownDTO" +
+            "(b.bank_id,b.bank_name,b.account_no,b.account_holder_name) " + "FROM BankDetails b")
+    List<BankDropdownDTO> findBanksForDropdown();*/
+
+    @Query(value = "SELECT bank_id, bank_name, account_no, account_holder_name " +
+            "FROM bank_details", nativeQuery = true)
+    List<BankDropdownDTO> findBanksForDropdown();
 
 }

@@ -11,17 +11,17 @@ import lombok.*;
 
 public class BankDetailsDropDown {
 
-        private int bn_id;
+        private int bank_id;
         private String bank_name;
         private String account_no;
         private String account_holder_name;
 
         public int getBn_id() {
-                return bn_id;
+                return bank_id;
         }
 
         public void setBn_id(int bn_id) {
-                this.bn_id = bn_id;
+                this.bank_id = bank_id;
         }
 
         public void setAccount_no(String account_no) {

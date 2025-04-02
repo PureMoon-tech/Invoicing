@@ -32,9 +32,9 @@ public class BankService {
         return repository_bnk.findById(id);
     }
 
-    public ResponseEntity<BankDropdownDTO> getBankDropdown()
+    public List<BankDropdownDTO> getBankDropdown()
     {
-        return repository_bnk.findClientsForDropdown();
+        return repository_bnk.findBanksForDropdown();
     }
 
     public void addBankDetails(BankDetails bnk)

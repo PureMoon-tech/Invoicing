@@ -12,7 +12,7 @@ public class BankDropdownDTOMapper {
               return null;
           }
 
-          return new BankDropdownDTO( bankDetails.getBd_id(),
+          return new BankDropdownDTO( bankDetails.getBank_id(),
                                       bankDetails.getBank_name(),
                                       bankDetails.getAccount_no(),
                                       bankDetails.getAccount_holder_name());
@@ -26,7 +26,7 @@ public class BankDropdownDTOMapper {
         }
         BankDetails bankDetails = new BankDetails();
 
-         bankDetails.setBd_id(bankDropdownDTO.getBd_id());
+         bankDetails.setBank_id(bankDropdownDTO.getBank_id());
          bankDetails.setBank_name(bankDropdownDTO.getBank_name());
          bankDetails.setAccount_no(bankDropdownDTO.getAccount_no());
          bankDetails.setAccount_holder_name(bankDropdownDTO.getAccount_holder_name());

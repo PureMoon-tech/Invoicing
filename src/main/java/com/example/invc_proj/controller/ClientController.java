@@ -20,8 +20,10 @@ public class ClientController {
 
 
     @GetMapping("/clients")
-    public List<ClientDropdownDTO> getClientsForDropdown() {
-        return service.getClientsForDropdown();
+    public ResponseEntity<List<ClientDropdownDTO>> getClientsForDropdown()
+    {
+       List<ClientDropdownDTO> clientDropdownDTO =  service.getClientsForDropdown();
+        return ResponseEntity.ok(clientDropdownDTO);
     }
 
     // Get Client by ID

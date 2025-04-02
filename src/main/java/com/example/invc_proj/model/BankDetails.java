@@ -7,17 +7,18 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
+@Table(name = "bank_details")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
 public class BankDetails {
 
-    @Getter
+
     @Id
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bd_id", unique = true, nullable = false)
-    private int bd_id;
+    @Column(name = "bank_id", unique = true, nullable = false)
+    private int bank_id;
     private String account_holder_name;
     private String bank_name;
     private String branch;

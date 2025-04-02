@@ -5,6 +5,7 @@ import com.example.invc_proj.model.*;
 import com.example.invc_proj.service.Process_Invoice;
 import com.example.invc_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -24,24 +25,28 @@ public class ServicesController
 
 
 @GetMapping("/services")
-    public List<Services> getAllServices()
+    public ResponseEntity<List<Services>> getAllServices()
     {
-        return service.getAllServices();
+
+        List<Services> services = service.getAllServices();
+        return ResponseEntity.ok(services);
     }
 
 @GetMapping("/services/{id}")
-    public Optional<Services> getServiceById(@PathVariable int id)
+    public ResponseEntity<Optional<Services>> getServiceById(@PathVariable int id)
     {
         System.out.println("calling getServiceById");
-        return service.getServiceById(id);
+        Optional<Services> services = service.getServiceById(id);
+        return ResponseEntity.ok(services);
     }
 
 @PostMapping("/services")
-    public void addServices(@RequestBody Services srvc)
+    public ResponseEntity<String> addServices(@RequestBody Services srvc)
     {
         System.out.println("calling post");
         System.out.println(srvc);
         service.addServices(srvc);
+        return ResponseEntity.status(201).body("Service added successfully");
     }
 
 

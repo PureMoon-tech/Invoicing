@@ -1,6 +1,7 @@
 package com.example.invc_proj.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class Invoice {
 
     @Id
     @Column(name = "invoice_id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int invoice_id;
     private int client_id;
     private int user_id;
@@ -25,6 +27,7 @@ public class Invoice {
     private Date last_updated_date;
     private int total;
     private String status;
+    private int bank_id;
 
     @OneToMany(mappedBy = "invoice_id", cascade = CascadeType.ALL)
     private List<ServicesRequested> invcSrvcs;

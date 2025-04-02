@@ -6,6 +6,7 @@ import com.example.invc_proj.model.BankDetailsDropDown;
 import com.example.invc_proj.service.BankService;
 import com.example.invc_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,28 +16,31 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/bank-config")
-public class BankController {
+public class BankController
+{
 
     @Autowired
     private BankService service;
 
     @GetMapping("/bankdetails")
-    public List<BankDetails> getAllBankDetails()
+    public ResponseEntity<List<BankDetails>> getAllBankDetails()
     {
-        return service.getAllBankDetails();
+        List<BankDetails> bankDetails = service.getAllBankDetails();
+        return ResponseEntity.ok(bankDetails);
     }
 
 
     @GetMapping("/bankdetailsdropdown")
-    public ResponseEntity<BankDropdownDTO> getAllBankDetailsDD()
+    public ResponseEntity<List<BankDropdownDTO>> getAllBankDetailsDD()
     {
-
-        return service.getBankDropdown();
-
+        List<BankDropdownDTO> dbdto = service.getBankDropdown();
+        return ResponseEntity.ok(dbdto);
+    }
        /* List<BankDetails> bankDetailsList= service.getAllBankDetails();; // Retrieve data from your database
         List<BankDropdownDTO> BankDetailsDD = new ArrayList<>();
 
-        for (BankDetails bankDetails : bankDetailsList) {
+        for (BankDetails bankDetails : bankDetailsList)
+        {
             BankDropdownDTO simplified = new BankDropdownDTO();
             simplified.setBd_id(bankDetails.getBd_id());
             simplified.setBank_name(bankDetails.getBank_name());
@@ -48,21 +52,31 @@ public class BankController {
         return BankDetailsDD;
        */
 
-    }
+
 
 
     @GetMapping("/bankdetails/{id}")
-    public Optional<BankDetails> getBankDetailsById(@PathVariable int id)
+    public ResponseEntity<Optional<BankDetails>> getBankDetailsById(@PathVariable int id)
     {
         System.out.println("calling getBankDetailsById");
-        return service.getBankDetailsById(id);
+
+        Optional<BankDetails> bankDetails = service.getBankDetailsById(id);
+        return ResponseEntity.ok(bankDetails);
     }
 
+
+    //private static final Logger logger = LoggerFactory.getLogger(BankDetailsController.class);  // Logger initialization
+
     @PostMapping("/bankdetails")
-    public void addClients(@RequestBody BankDetails bnk)
-    {
-        System.out.println("calling post");
-        System.out.println(bnk);
-        service.addBankDetails(bnk);
+    public ResponseEntity<String> addBankDetails(@RequestBody BankDetails bnk) {
+        try {
+            //logger.info("Received request to add bank details: {}", bnk);
+            service.addBankDetails(bnk);  // Call the service to add bank details
+            return ResponseEntity.status(HttpStatus.CREATED).body("Bank details added successfully.");
+        } catch (Exception e) {
+            //logger.error("Error while adding bank details", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add bank details.");
+        }
     }
 }
+

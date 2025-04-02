@@ -4,6 +4,7 @@ import com.example.invc_proj.model.userLogin;
 import com.example.invc_proj.model.USERS;
 import com.example.invc_proj.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,28 +24,32 @@ public class UserController {
     }*/
 
     @GetMapping("/user/{UserId}")
-    public Optional<USERS> getUserById(@PathVariable int UserId)
+    public ResponseEntity<Optional<USERS>> getUserById(@PathVariable int UserId)
     {
-        return service.getUserById(UserId);
+        Optional<USERS> users = service.getUserById(UserId);
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/user-name/{UserName}")
-    public Optional<USERS> getUserByName(@PathVariable String UserName)
+    public ResponseEntity<Optional<USERS>> getUserByName(@PathVariable String UserName)
     {
-        return service.getUserByName(UserName);
+        Optional<USERS> users = service.getUserByName(UserName);
+        return ResponseEntity.ok(users);
     }
 
     @PostMapping("/user")
-    public void addUser(@RequestBody USERS user)
+    public ResponseEntity<String> addUser(@RequestBody USERS user)
     {
         System.out.println("calling add user"+user);
         service.addUser(user);
+        return ResponseEntity.status(201).body("user added successfully");
     }
 
     @PutMapping("/User")
-    public void alterUser(@RequestBody USERS user)
+    public ResponseEntity<String> alterUser(@RequestBody USERS user)
     {
         System.out.println("calling add user"+user);
         service.addUser(user);
+        return ResponseEntity.status(201).body("user altered successfully");
     }
 }

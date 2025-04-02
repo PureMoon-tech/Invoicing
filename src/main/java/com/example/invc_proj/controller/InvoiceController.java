@@ -1,7 +1,9 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.model.ServicesRequested;
+import com.example.invc_proj.service.InvoiceService;
 import com.example.invc_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,9 @@ public class InvoiceController {
 
     @Autowired
     private ProductService service;
+
+    @Autowired
+    private InvoiceService service2;
 
     @GetMapping("/servicesRequested")
     public List<ServicesRequested> getAllServicesRequested()
@@ -61,6 +66,26 @@ public class InvoiceController {
     {
         return service.getCurrentFYTotal(p_client_Id);
     }
+
+    @PostMapping("/generate_Invoice/{p_client_Id}/{p_bank_id}/{p_invoice_status}")
+    public Invoice getInvoice (@PathVariable Integer p_client_Id,
+                               @PathVariable Integer p_bank_id,
+                               @PathVariable String p_invoice_status,
+                               @RequestBody List<ServiceCostRequest> serviceCostRequest)
+    {
+        System.out.println(p_client_Id);
+        System.out.println(serviceCostRequest);
+        return service2.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,serviceCostRequest);
+    }
+
+   /* @PatchMapping("/update_Status/{p_invoice_id}/{p_invoice_status}")
+    public Invoice updateInvoiceStatus(@PathVariable Integer p_invoice_id,
+                                       @PathVariable String p_invoice_status)
+    {
+        System.out.println(p_invoice_id);
+        System.out.println(p_invoice_status);
+        return service2.updateInvoiceStatus(p_invoice_id,p_invoice_status);
+    }*/
 
  /*@PostMapping("/processInvoice")
     public void processInvoice(Invc invc)
