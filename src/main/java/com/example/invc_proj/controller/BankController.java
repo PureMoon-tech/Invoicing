@@ -8,6 +8,7 @@ import com.example.invc_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/bank-config")
+@PreAuthorize("hasRole('ADMIN')")
 public class BankController
 {
 
@@ -68,7 +70,8 @@ public class BankController
     //private static final Logger logger = LoggerFactory.getLogger(BankDetailsController.class);  // Logger initialization
 
     @PostMapping("/bankdetails")
-    public ResponseEntity<String> addBankDetails(@RequestBody BankDetails bnk) {
+    public ResponseEntity<String> addBankDetails(@RequestBody BankDetails bnk)
+    {
         try {
             //logger.info("Received request to add bank details: {}", bnk);
             service.addBankDetails(bnk);  // Call the service to add bank details
@@ -76,6 +79,19 @@ public class BankController
         } catch (Exception e) {
             //logger.error("Error while adding bank details", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add bank details.");
+        }
+    }
+
+    @DeleteMapping("/bankdetails/{p_bank_id}")
+    public ResponseEntity<String> deleteBankDetails(@PathVariable int p_bank_id)
+    {
+        try {
+            service.deleteBankDetails(p_bank_id);
+            return ResponseEntity.status(HttpStatus.OK).body("Bank Details Removed");
+        }
+        catch(Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete bank details");
         }
     }
 }

@@ -6,6 +6,7 @@ import com.example.invc_proj.service.Process_Invoice;
 import com.example.invc_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/service-config")
+@PreAuthorize("hasRole('ADMIN')")
 public class ServicesController
 {
 
@@ -43,11 +45,23 @@ public class ServicesController
 @PostMapping("/services")
     public ResponseEntity<String> addServices(@RequestBody Services srvc)
     {
-        System.out.println("calling post");
-        System.out.println(srvc);
+       // System.out.println("calling post");
+        //System.out.println(srvc);
         service.addServices(srvc);
         return ResponseEntity.status(201).body("Service added successfully");
     }
+@PutMapping("/services/{p_service_id}")
+     public ResponseEntity<String> updateServiceStatus(@PathVariable int p_service_id)
+    {
+       service.updateServiceStatus(p_service_id);
+       return ResponseEntity.status(200).body("Service status updated successfully");
+    }
 
+@DeleteMapping("/services/{p_service_id}")
+    public ResponseEntity<String> deleteService(@PathVariable int p_service_id)
+   {
+     service.deleteService(p_service_id);
+     return ResponseEntity.status(200).body("service deleted successfully");
+   }
 
 }

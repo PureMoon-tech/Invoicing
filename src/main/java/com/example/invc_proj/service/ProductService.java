@@ -3,6 +3,7 @@ package com.example.invc_proj.service;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
@@ -66,10 +67,11 @@ public class ProductService {
     }
 
 
-    public Optional<ServicesRequested> getServicesRequestedByInvoice(int invoiceId)
+    public List<ServicesRequested> getServicesRequestedByInvoice(int invoiceId)
     {
       System.out.println("get by id"+invoiceId);
-      return repository_invc_srvc.findById(invoiceId);
+      List<ServicesRequested> servicesRequested = repository_invc_srvc.findById(invoiceId);
+      return servicesRequested;
     }
 
 
@@ -88,11 +90,12 @@ public class ProductService {
 
  public Integer getInvoiceId(String seq_invoice_id)
   {
-    return SeqNextVal.getNextSequenceValue(seq_invoice_id);
+
+      return SeqNextVal.getNextSequenceValue(seq_invoice_id);
   }
 
 
-
+  /*get current financial year total in order to process tds*/
   public Integer getCurrentFYTotal(Integer clientId)
   {
       System.out.println("clientId: "+clientId);
@@ -112,14 +115,21 @@ public class ProductService {
  {
     double tds_value=0;
     tds_value = (total * 0.10) ;
-   //gst_value = total + gst_value; if grand total is being calulated
+   //tds_value = total - tds_value; if grand total is being calulated
     return tds_value;
  }
 
 
+    public void updateServiceStatus(int pServiceId)
+    {
+       Services services = repository_srvc.findById(pServiceId).
+               orElseThrow(() -> new RuntimeException("Service not found"));
+    }
 
-
-
+    public void deleteService(int pServiceId)
+    {
+      repository_srvc.deleteById(pServiceId);
+    }
 }
 
 

@@ -46,15 +46,24 @@ public class ClientController {
 
     // Update an existing client
     @PutMapping("/client")
-    public ResponseEntity<String> alterClient(@RequestBody Client client) {
+    public ResponseEntity<String> alterClient(@RequestBody Client client)
+    {
         // Check if client exists, if not return 404 Not Found
         Optional<Client> existingClient = service.getClientById(client.getClient_id());
-        if (existingClient.isEmpty()) {
+        if (existingClient.isEmpty())
+        {
             return ResponseEntity.notFound().build();
         }
 
         service.updateClient(client);  // Rename to updateClient if necessary
         return ResponseEntity.ok("Client updated successfully");
+    }
+
+    @DeleteMapping("/client/{p_client_id}")
+    public  ResponseEntity<String> deleteclient(@PathVariable int p_client_id)
+    {
+        service.removeClient(p_client_id);
+        return ResponseEntity.ok("Client Removed Successfully");
     }
 
 

@@ -45,9 +45,9 @@ public class InvoiceService {
         String username = userPrincipal.getUsername();
 
         // Fetch the user object by username
-        Optional<USERS> user = userService.getUserByName(username);  // Assuming this method returns a User entity with user_id
+        Optional<User> user = userService.getUserByName(username);  // Assuming this method returns a User entity with user_id
 
-        int userId = user.get().getUser_id();  // Assuming `getUserId()` returns the user ID
+        int userId = user.get().getId();  // Assuming `getUserId()` returns the user ID
         int total = serviceCosts.getFirst().getTotalCost();
 
         // Find the client by clientId (you can throw exception if client is not found)
@@ -173,6 +173,26 @@ public class InvoiceService {
         Invoice updatedInvoice = invoiceRepository.save(invoice);
 
         return updatedInvoice;
+
+    }
+
+    public void deleteInvoice(Integer pInvoiceId) {
+        List<ServicesRequested> servicesRequested = servicesRequestedRepository.findByInvoiceId(pInvoiceId);
+
+          if (servicesRequested == null)
+          {
+              throw new RuntimeException("No Services found for the Invoice");
+          }
+
+        for(ServicesRequested srvc : servicesRequested )
+        {
+            servicesRequestedRepository.deleteById(srvc.getRequest_id());
+        }
+
+
+         Invoice invoice =  invoiceRepository.findById(pInvoiceId).
+                  orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
+
 
     }
 }

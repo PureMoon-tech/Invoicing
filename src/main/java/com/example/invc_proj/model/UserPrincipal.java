@@ -11,9 +11,9 @@ import java.util.Collections;
 public class UserPrincipal implements UserDetails {
 
 
-    private final USERS User;
+    private final User User;
 
-    public UserPrincipal (USERS User)
+    public UserPrincipal (User User)
     {
         this.User = User;
     }
@@ -32,7 +32,7 @@ public class UserPrincipal implements UserDetails {
     @Override
     public String getUsername() {
         System.out.println("get username");
-        return User.getUserName();
+        return User.getUsername();
     }
 
     @Override

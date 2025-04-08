@@ -26,6 +26,7 @@ public class ServicesRequested {
 
     @ManyToOne
     @JoinColumn(name = "invoice_id", referencedColumnName = "invoice_id")
+    @JsonIgnore
     private Invoice invoice_id;
 
     private int user_id;

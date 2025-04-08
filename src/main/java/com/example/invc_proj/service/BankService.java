@@ -42,4 +42,8 @@ public class BankService {
         repository_bnk.save(bnk);
     }
 
+    public void deleteBankDetails(int pBankId)
+    {
+      repository_bnk.deleteById(pBankId);
+    }
 }

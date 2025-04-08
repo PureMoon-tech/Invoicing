@@ -30,6 +30,7 @@ public class Invoice {
     private int bank_id;
 
     @OneToMany(mappedBy = "invoice_id", cascade = CascadeType.ALL)
+   // @JsonIgnore
     private List<ServicesRequested> invcSrvcs;
 
 }

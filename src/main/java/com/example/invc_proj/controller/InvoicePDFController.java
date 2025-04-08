@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/invoices")
+@PreAuthorize("isAuthenticated()")
 public class InvoicePDFController {
 
     @Autowired
@@ -28,10 +30,11 @@ public class InvoicePDFController {
     @Autowired
     private InvoicePdfService invoicePdfService;
 
+    /*end point to create pdf of generated invoice*/
     @GetMapping("/pdf")
     public ResponseEntity<byte[]> downloadInvoicePdf(@RequestBody Invoice invoice) {
-        // Fetch Invoice and Services
 
+        // Fetch Services mapped to the invoice
         List<ServicesRequested> services = servicesRequestedRepo.findByInvoiceId(invoice.getInvoice_id());
 
         // Generate PDF

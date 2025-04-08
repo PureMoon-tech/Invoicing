@@ -1,6 +1,6 @@
 package com.example.invc_proj.service;
 
-import com.example.invc_proj.model.USERS;
+import com.example.invc_proj.model.User;
 import com.example.invc_proj.model.UserPrincipal;
 import com.example.invc_proj.repository.ServicesRepo;
 import com.example.invc_proj.repository.UserRepo;
@@ -34,7 +34,7 @@ public class InvcUserDetailService implements UserDetailsService
             throws UsernameNotFoundException
     {
         System.out.println("User  "+user_name);
-       USERS user = repositoryuser.findByUserName(user_name);
+       User user = repositoryuser.findByUserName(user_name);
         if (user == null)
         {
             System.out.println("User Not Found "+user_name);
@@ -48,7 +48,7 @@ public class InvcUserDetailService implements UserDetailsService
 
     private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder(12);
 
-    public USERS saveUser(USERS user) {
+    public User saveUser(User user) {
         user.setPassword(encoder.encode(user.getPassword()));
         System.out.println(user.getPassword());
         return repositoryuser.save(user) ;

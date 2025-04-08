@@ -83,6 +83,11 @@ public class ClientService {
         return clientRepo.findById(clientId);
     }
 
+    public void removeClient(int pClientId)
+    {
+        clientRepo.deleteById(pClientId);
+    }
+
 /*    public Optional<Client> getClientById(int id)
     {
       System.out.println("get by id"+id);

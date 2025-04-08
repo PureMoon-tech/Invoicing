@@ -1,19 +1,23 @@
 package com.example.invc_proj.repository;
 
 
-import com.example.invc_proj.model.USERS;
+import com.example.invc_proj.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepo extends JpaRepository<USERS, Integer>
+public interface UserRepo extends JpaRepository<User, Integer>
 {
         //System.out.println("User Not Found "+USERS);
-    USERS findByUserName(String userName);
+        @Query(value = "SELECT * FROM users WHERE user_name = :username", nativeQuery = true)
+        User findByUserName(String username);
 
-    Optional<USERS> findById(Integer user_Id);
+    Optional<User> findById(Integer user_Id);
+
+
 
 
 }
