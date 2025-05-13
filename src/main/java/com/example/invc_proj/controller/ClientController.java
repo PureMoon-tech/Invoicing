@@ -5,6 +5,7 @@ import com.example.invc_proj.model.Client;
 import com.example.invc_proj.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/client-config")
+@PreAuthorize("isAuthenticated()")
 public class ClientController {
 
     @Autowired
@@ -39,6 +41,7 @@ public class ClientController {
 
     // Add a new client
     @PostMapping("/client")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addClient(@RequestBody Client client) {
         service.addClient(client);
         return ResponseEntity.status(201).body("Client added successfully");
@@ -46,6 +49,7 @@ public class ClientController {
 
     // Update an existing client
     @PutMapping("/client")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> alterClient(@RequestBody Client client)
     {
         // Check if client exists, if not return 404 Not Found
@@ -60,6 +64,7 @@ public class ClientController {
     }
 
     @DeleteMapping("/client/{p_client_id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public  ResponseEntity<String> deleteclient(@PathVariable int p_client_id)
     {
         service.removeClient(p_client_id);

@@ -9,6 +9,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
@@ -17,15 +18,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
+@RequiredArgsConstructor
 public class InvoicePdfService {
 
-    @Autowired
     private ClientRepo clientRepository;
 
-    @Autowired
     private BankRepo bankRepository;
 
-    @Autowired
     private ServicesRepo servicesRespository;
 
     public byte[] generateInvoicePdf(Invoice invoice, List<ServicesRequested> services) {
@@ -36,7 +35,6 @@ public class InvoicePdfService {
 
             // Add Invoice Title
             document.add(new Paragraph("Invoice")
-                    .setBold()
                     .setFontSize(20)
                     .setMarginBottom(10));
 

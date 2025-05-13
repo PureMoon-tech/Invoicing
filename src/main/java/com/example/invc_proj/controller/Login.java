@@ -10,8 +10,7 @@ public class Login  {
     @GetMapping("/")
     public String greet()
     {
-        System.out.println("calling Login");
-        return "Welcome to Invoicing";
+        return "Welcome to Invoicing Application";
     }
 
 

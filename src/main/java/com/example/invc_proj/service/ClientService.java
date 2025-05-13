@@ -80,11 +80,13 @@ public class ClientService {
 
     // Get full client details by ID
     public Optional<Client> getClientById(int clientId) {
+
         return clientRepo.findById(clientId);
     }
 
     public void removeClient(int pClientId)
     {
+
         clientRepo.deleteById(pClientId);
     }
 

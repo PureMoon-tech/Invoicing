@@ -31,7 +31,6 @@ public class ServicesRequested {
 
     private int user_id;
     private int client_id;
-    private int organization_id;
     private int service_cost;
     private int tds_rate;
     private int gst_rate;

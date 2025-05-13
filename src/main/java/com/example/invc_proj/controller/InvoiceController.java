@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-@PreAuthorize("isAuthenticated()")
+
 @RestController
 @RequestMapping("/invoice")
+@PreAuthorize("isAuthenticated()")
 public class InvoiceController {
-
-
 
     @Autowired
     private InvoiceService service;

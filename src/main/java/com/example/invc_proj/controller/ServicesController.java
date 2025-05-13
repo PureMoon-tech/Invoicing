@@ -15,53 +15,50 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/service-config")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("isAuthenticated()")
 public class ServicesController
 {
 
     @Autowired
     private ProductService service;
 
-    //private Process_Invoice Prcs_invc;
+        @GetMapping("/services")
+            public ResponseEntity<List<Services>> getAllServices()
+            {
 
+                List<Services> services = service.getAllServices();
+                return ResponseEntity.ok(services);
+            }
 
+        @GetMapping("/services/{id}")
+            public ResponseEntity<Optional<Services>> getServiceById(@PathVariable int id)
+            {
+                Optional<Services> services = service.getServiceById(id);
+                return ResponseEntity.ok(services);
+            }
 
-@GetMapping("/services")
-    public ResponseEntity<List<Services>> getAllServices()
-    {
+        @PostMapping("/services")
+        @PreAuthorize("hasRole('ADMIN')")
+            public ResponseEntity<String> addServices(@RequestBody Services srvc)
+            {
+                service.addServices(srvc);
+                return ResponseEntity.status(201).body("Service added successfully");
+            }
 
-        List<Services> services = service.getAllServices();
-        return ResponseEntity.ok(services);
-    }
+        @PutMapping("/services/{p_service_id}")
+        @PreAuthorize("hasRole('ADMIN')")
+             public ResponseEntity<String> updateServiceStatus(@PathVariable int p_service_id)
+            {
+               service.updateServiceStatus(p_service_id);
+               return ResponseEntity.status(200).body("Service status updated successfully");
+            }
 
-@GetMapping("/services/{id}")
-    public ResponseEntity<Optional<Services>> getServiceById(@PathVariable int id)
-    {
-        System.out.println("calling getServiceById");
-        Optional<Services> services = service.getServiceById(id);
-        return ResponseEntity.ok(services);
-    }
-
-@PostMapping("/services")
-    public ResponseEntity<String> addServices(@RequestBody Services srvc)
-    {
-       // System.out.println("calling post");
-        //System.out.println(srvc);
-        service.addServices(srvc);
-        return ResponseEntity.status(201).body("Service added successfully");
-    }
-@PutMapping("/services/{p_service_id}")
-     public ResponseEntity<String> updateServiceStatus(@PathVariable int p_service_id)
-    {
-       service.updateServiceStatus(p_service_id);
-       return ResponseEntity.status(200).body("Service status updated successfully");
-    }
-
-@DeleteMapping("/services/{p_service_id}")
-    public ResponseEntity<String> deleteService(@PathVariable int p_service_id)
-   {
-     service.deleteService(p_service_id);
-     return ResponseEntity.status(200).body("service deleted successfully");
-   }
+        @DeleteMapping("/services/{p_service_id}")
+        @PreAuthorize("hasRole('ADMIN')")
+            public ResponseEntity<String> deleteService(@PathVariable int p_service_id)
+           {
+             service.deleteService(p_service_id);
+             return ResponseEntity.status(200).body("service deleted successfully");
+           }
 
 }

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/bank-config")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("isAuthenticated()")
 public class BankController
 {
 
@@ -70,6 +70,7 @@ public class BankController
     //private static final Logger logger = LoggerFactory.getLogger(BankDetailsController.class);  // Logger initialization
 
     @PostMapping("/bankdetails")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addBankDetails(@RequestBody BankDetails bnk)
     {
         try {
@@ -83,6 +84,7 @@ public class BankController
     }
 
     @DeleteMapping("/bankdetails/{p_bank_id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteBankDetails(@PathVariable int p_bank_id)
     {
         try {

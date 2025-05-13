@@ -36,22 +36,20 @@ public class InvoiceService {
     private UserService userService; // Assuming this service provides user info by username
 
     public Invoice generateInvoice(int clientId, int bankId , String invoiceStatus,List<ServiceCostRequest> serviceCosts) {
+
         // Get the currently authenticated user's username
-        System.out.println(serviceCosts);
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-// Then, you can access the user information from UserPrincipal and map it to your USERS class if needed
-// Assuming 'UserPrincipal' has a 'getUsername' method
         String username = userPrincipal.getUsername();
 
         // Fetch the user object by username
-        Optional<User> user = userService.getUserByName(username);  // Assuming this method returns a User entity with user_id
+        Optional<User> user = userService.getUserByName(username);
+        int userId = user.get().getId();
+        //int total = serviceCosts.getFirst().getTotalCost();
 
-        int userId = user.get().getId();  // Assuming `getUserId()` returns the user ID
-        int total = serviceCosts.getFirst().getTotalCost();
-
-        // Find the client by clientId (you can throw exception if client is not found)
-        Client client = clientRepository.findById(clientId).orElseThrow(() -> new RuntimeException("Client not found"));
+        // Find the client by clientId
+        Client client = clientRepository.findById(clientId)
+                                        .orElseThrow(() -> new RuntimeException("Client not found"));
 
         // Initialize total amount and tax calculations
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -60,9 +58,9 @@ public class InvoiceService {
 
         // Loop through each service cost entry to create the services requested
         for (ServiceCostRequest serviceCostRequest : serviceCosts) {
-            // Fetch the selected service from the database using the serviceId to get min and max prices
+            // Fetch the selected service from the database using the serviceId
             Services service = serviceRepository.findById(serviceCostRequest.getServiceId())
-                    .orElseThrow(() -> new RuntimeException("Service not found"));
+                                                .orElseThrow(() -> new RuntimeException("Service not found"));
 
             // Create the ServicesRequested entity and add it to the list
             ServicesRequested servicesRequested = new ServicesRequested();
@@ -116,16 +114,16 @@ public class InvoiceService {
         return savedInvoice;
     }
 
-    // Example method to calculate TDS rate (implement based on your business logic)
+    //Method to calculate TDS rate
     private int calculateTdsRate(Services service) {
-        // For example, TDS rate might depend on the service type or other factors
+        // TDS rate might depend on the service type
         return 10; // Assuming a fixed TDS rate for simplicity
     }
 
-    // Example method to calculate GST rate (implement based on your business logic)
+    // Method to calculate GST rate
     private int calculateGstRate(Services service) {
-        // Similar to TDS, GST might depend on service type, etc.
-        return 18; // Assuming a fixed GST rate for simplicity
+        // GST might depend on service type, etc.
+        return 18; // Assuming a fixed GST rate for simplicity else get gst rate according to the service
     }
 
     // Calculate the total amount for the service (including GST, TDS, etc.)
@@ -192,7 +190,7 @@ public class InvoiceService {
 
          Invoice invoice =  invoiceRepository.findById(pInvoiceId).
                   orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
-
+           invoiceRepository.delete(invoice);
 
     }
 }

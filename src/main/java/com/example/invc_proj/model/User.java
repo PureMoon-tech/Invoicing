@@ -32,7 +32,8 @@ public class User {
 
     private String status;
 
-    @Column(name = "inserted_on")
+
+    @Column(name = "inserted_on", insertable = false, updatable = false)
     private Date insertedOn;
 
     // 🔐 Instead of storing role_id and role_name separately:
