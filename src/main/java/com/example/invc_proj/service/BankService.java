@@ -37,6 +37,12 @@ public class BankService {
         return repository_bnk.findBanksForDropdown();
     }
 
+    public List<BankDropdownDTO> getBankDropdownById(int id)
+    {
+        return repository_bnk.findBanksForDropdown();
+    }
+
+
     public void addBankDetails(BankDetails bnk)
     {
         repository_bnk.save(bnk);
