@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
         import java.util.List;
 
 @RestController
-@RequestMapping("/api/receipts")
+@RequestMapping("/receipt")
 public class ReceiptController {
 
     @Autowired
     private ReceiptService Service;
 
-    @PostMapping
+    @PostMapping("/generate-receipt")
     public ResponseEntity<ReceiptResponseDTO> createReceipt(@RequestBody ReceiptRequestDTO request) {
         return ResponseEntity.ok(Service.addReceipt(request));
     }

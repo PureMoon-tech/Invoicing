@@ -2,12 +2,15 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.ReceiptRequestDTO;
 import com.example.invc_proj.dto.ReceiptResponseDTO;
+import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.model.Receipt;
 import com.example.invc_proj.repository.InvoiceRepo;
 import com.example.invc_proj.repository.ReceiptRepo;
 import com.example.invc_proj.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,14 +28,40 @@ public class ReceiptService {
 
         public ReceiptResponseDTO addReceipt(ReceiptRequestDTO request) {
             Receipt receipt = new Receipt();
-            receipt.setAmount(request.getAmount());
-            receipt.setPayment_date(request.getPaymentDate());
+            LocalDateTime PaymentDate = request.getPaymentDate();
+            if(PaymentDate == null)
+            {
+                PaymentDate = LocalDateTime.now();
+            }
+
+            receipt.setPayment_date(PaymentDate);
+
             receipt.setPayment_mode(request.getPaymentMode());
             receipt.setReference(request.getReference());
             receipt.setRemarks(request.getRemarks());
 
-            receipt.setInvoice(invoiceRepository.findById(request.getInvoiceId())
-                    .orElseThrow(() -> new RuntimeException("Invoice not found")));
+
+            Invoice invc = invoiceRepository.findById(request.getInvoiceId()).orElseThrow(() -> new RuntimeException("Invoice not found"));
+            receipt.setInvoice(invc);
+
+            int Amount = invc.getTotal();
+            String Status = invc.getStatus();
+
+            if(Status.equalsIgnoreCase("UNPAID")) {
+                if (Amount >= request.getAmount()) {
+                    receipt.setAmount(request.getAmount());
+                } else {
+                    throw new RuntimeException("Enter Valid Invoice Amount");
+                }
+            }
+            else if(Status.equalsIgnoreCase("PAID"))
+              {
+                  if (Amount == request.getAmount()) {
+                      receipt.setAmount(request.getAmount());
+                  } else {
+                      throw new RuntimeException("Enter Valid Invoice Amount");
+                  }
+              }
 
             receipt.setAcknowledgedBy(userRepository.findById(request.getAcknowledgedByUserId())
                     .orElseThrow(() -> new RuntimeException("User not found")));
@@ -43,7 +72,7 @@ public class ReceiptService {
         }
 
         public List<ReceiptResponseDTO> getReceiptsByInvoiceId(int invoiceId) {
-            return receiptRepository.findByInvoiceId(invoiceId)
+            return receiptRepository.findByInvoice_invoice_id(invoiceId)
                     .stream()
                     .map(this::mapToResponse)
                     .collect(Collectors.toList());
