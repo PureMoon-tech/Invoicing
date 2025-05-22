@@ -1,0 +1,45 @@
+Business Source License 1.1
+
+Parameters
+==========
+
+Licensor: PUREMOON-TECH  
+Licensed Work: This repository, including all source code and documentation  
+Additional Use Grant: For non-production use, including development, testing, and evaluation  
+Change Date: 2028-01-01  
+Change License: Apache License 2.0
+
+Terms
+=====
+
+The Licensed Work is provided under the terms of the Business Source License 1.1 (the “License”).
+
+Use Limitation: You may make any use of the Licensed Work, as long as it is not a Production Use.  
+Production Use means any use of the Licensed Work by a person or entity in a business operation, including running a software-as-a-service (SaaS) product or deploying it for internal commercial purposes.
+
+Change Date: The Change Date is the date specified above. On the Change Date, the License will convert to the Change License for all versions of the Licensed Work that were released under this License before the Change Date.
+
+Change License: The Change License is the open source license specified above. All rights granted under the License will be granted under the Change License on the Change Date.
+
+Grant: Subject to the conditions and limitations of this License, the Licensor hereby grants you a non-exclusive, worldwide, non-sublicensable, non-transferable license to use, copy, modify, create derivative works, and distribute the Licensed Work, solely for non-Production Uses.
+
+Restrictions
+============
+
+You may not:
+- Use the Licensed Work for Production Use prior to the Change Date unless you have purchased a separate commercial license from the Licensor.
+- Remove or alter any license, copyright, or other notices contained in the Licensed Work.
+- Use the Licensed Work except as expressly permitted under this License.
+
+Effective Date
+==============
+
+This License is effective as of the date you first use, access, or download the Licensed Work.
+
+Disclaimer
+==========
+
+THE LICENSED WORK IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND. THE LICENSOR DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+
+For the full terms, see: https://mariadb.com/bsl11
+
