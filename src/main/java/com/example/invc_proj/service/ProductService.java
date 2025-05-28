@@ -63,7 +63,7 @@ public class ProductService {
     public Optional<Services> getServiceById(int id)
     {
       System.out.println("get by id"+id);
-       return repository_srvc.findById(id);
+       return Optional.ofNullable(repository_srvc.findById(id).orElseThrow(() -> new RuntimeException("Service not found")));
     }
 
 

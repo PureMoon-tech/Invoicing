@@ -81,7 +81,9 @@ public class ClientService {
     // Get full client details by ID
     public Optional<Client> getClientById(int clientId) {
 
-        return clientRepo.findById(clientId);
+        //return clientRepo.findById(clientId);
+        return Optional.ofNullable(clientRepo.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client not found")));
     }
 
     public void removeClient(int pClientId)

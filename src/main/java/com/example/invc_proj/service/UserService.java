@@ -2,6 +2,8 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.exceptions.InvalidOldPasswordException;
+import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.model.AppRole;
 import com.example.invc_proj.model.User;
 import com.example.invc_proj.repository.RoleRepository;
@@ -42,7 +44,7 @@ public class UserService {
       return User_repo.findAll();
     }
 
-    public Optional<User> getUserById(int user_id)
+   /* public Optional<User> getUserById(int user_id)
     {
 
         return User_repo.findById(user_id);
@@ -51,14 +53,28 @@ public class UserService {
     public Optional<User> getUserByName(String UserName)
     {
         return Optional.ofNullable(User_repo.findByUserName(UserName));
+    }*/
+
+    public Optional<User> getUserById(int user_id)
+    {
+
+        return Optional.ofNullable(User_repo.findById(user_id).
+                orElseThrow(() -> new RuntimeException("User not found")));
+
+    }
+
+    public Optional<User> getUserByName(String UserName)
+    {
+        return Optional.ofNullable(User_repo.findByUserName(UserName).orElseThrow(() -> new RuntimeException("User not found")));
+
     }
 
     public ResponseEntity<String> addUser(UserDTO user)
     {
         User NewUser = new User();
         NewUser.setUsername(user.getUsername());
-        NewUser.setFirstName(user.getUsername());
-        NewUser.setLastName(user.getUsername());
+        NewUser.setFirstName(user.getFirstName());
+        NewUser.setLastName(user.getLastName());
         AppRole role = role_repo.findById(user.getRole_id()).orElseThrow(() ->new RuntimeException("Role Not Found"));
         NewUser.setRole(role);
         NewUser.setStatus(user.getStatus());
@@ -66,12 +82,14 @@ public class UserService {
         //Validate password strength method needs to added and few more validators, to have strong password
         if (user.getPassword().length() < 8)
         {
-            return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
+            //return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
+            throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
         }
         String encodedPassword = passwordEncoder.encode(rawPassword);
         NewUser.setPassword(encodedPassword);
         System.out.println(user.getPassword());
         NewUser.setPasswordSalt(user.getPasswordSalt());
+        NewUser.setEmailId(user.getEmailId());
         System.out.println(NewUser);
         User_repo.save(NewUser);
         System.out.println(NewUser);
@@ -108,16 +126,25 @@ public class UserService {
 
 
     public ResponseEntity<String> updatePassword(PasswordUpdateRequestDTO request, Principal principal){
-        User user = User_repo.findByUserName(principal.getName());
+        //User user = User_repo.findByUserName(principal.getName());
+
+        User user = User_repo.findByUserName(principal.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Verify the old password
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+       /* if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Old password is incorrect");
+        }*/
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
+        {
+            throw new InvalidOldPasswordException("Old password is incorrect");
         }
 
         // Validate new password strength need to include few more validators to have strong password
-        if (request.getNewPassword().length() < 8) {
-            return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
+        if (request.getNewPassword().length() < 8)
+        {
+            throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
         }
 
         // Hash the new password before saving

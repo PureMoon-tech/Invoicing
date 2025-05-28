@@ -30,6 +30,9 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "email_id")
+    // @Email
+    private String emailId;
     private String status;
 
 
