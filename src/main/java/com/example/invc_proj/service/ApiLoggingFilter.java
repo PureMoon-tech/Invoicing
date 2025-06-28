@@ -112,7 +112,7 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
             String action = request.getMethod() + " " + endpoint;
 
             AuditLog auditLog = new AuditLog();
-            auditLog.setUser(username);
+            auditLog.setUsername(username);
             auditLog.setAction(action);
             auditLog.setTimestamp(LocalDateTime.now());
 

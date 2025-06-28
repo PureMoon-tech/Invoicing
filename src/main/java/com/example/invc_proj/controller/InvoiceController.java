@@ -2,6 +2,7 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.Invoice;
+import com.example.invc_proj.model.InvoiceType;
 import com.example.invc_proj.model.ServicesRequested;
 import com.example.invc_proj.service.InvoiceService;
 import com.example.invc_proj.service.ProductService;
@@ -22,15 +23,16 @@ public class InvoiceController {
     private InvoiceService service;
 
     /*End point to generate invoice*/
-    @PostMapping("/generate-invoice/{p_client_Id}/{p_bank_id}/{p_invoice_status}")
+    @PostMapping("/generate-invoice/{p_client_Id}/{p_bank_id}/{p_invoice_status}/{p_invoice_type}")
     public ResponseEntity<Invoice> generateInvoice (@PathVariable Integer p_client_Id,
                                @PathVariable Integer p_bank_id,
                                @PathVariable String p_invoice_status,
+                               @PathVariable InvoiceType p_invoice_type,
                                @RequestBody List<ServiceCostRequest> serviceCostRequest)
     {
         System.out.println(p_client_Id);
         System.out.println(serviceCostRequest);
-        Invoice invoice = service.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,serviceCostRequest);
+        Invoice invoice = service.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,p_invoice_type,serviceCostRequest);
         return ResponseEntity.status(201).body(invoice);
     }
 
@@ -51,5 +53,6 @@ public class InvoiceController {
         service.deleteInvoice(p_invoice_id);
         return ResponseEntity.status(200).body("Invoice Deleted Successfully");
     }
+
 
 }

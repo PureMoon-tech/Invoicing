@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class InvcProjController {
+public class InvcController {
 
      @Autowired
      private ProductService service;
@@ -53,6 +53,8 @@ public class InvcProjController {
     {
         service.CreateInvoice(invc);
     }
+
+
     @GetMapping("/invoice_id/{seq_invoice_id}")
     public Integer getInvoiceId(@PathVariable String seq_invoice_id)
     {

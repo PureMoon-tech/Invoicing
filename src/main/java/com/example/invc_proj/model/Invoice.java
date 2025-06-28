@@ -21,6 +21,10 @@ public class Invoice {
     @Column(name = "invoice_id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int invoice_id;
+
+    @Column(name = "invoice_number", unique = true, nullable = false)
+    private String invoice_number;
+
     private int client_id;
     private int user_id;
     private Date invoice_generated_date;

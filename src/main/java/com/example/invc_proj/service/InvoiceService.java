@@ -34,8 +34,11 @@ public class InvoiceService {
     private ServicesRequestedRepo servicesRequestedRepository;
     @Autowired
     private UserService userService; // Assuming this service provides user info by username
+    @Autowired
+    private InvoiceNumGeneratorService invoiceNumGeneratorService;
 
-    public Invoice generateInvoice(int clientId, int bankId , String invoiceStatus,List<ServiceCostRequest> serviceCosts) {
+
+    public Invoice generateInvoice(int clientId, int bankId , String invoiceStatus,InvoiceType invoiceType,List<ServiceCostRequest> serviceCosts) {
 
         // Get the currently authenticated user's username
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
@@ -94,6 +97,7 @@ public class InvoiceService {
         invoice.setLast_updated_date(new Date());
         invoice.setUser_id(userId); // Set the logged-in user's ID
         invoice.setBank_id(bankId);
+        invoice.setInvoice_number(invoiceNumGeneratorService.generateInvoiceNumber(invoiceType));
 
         System.out.println(invoice);
         // Save the invoice to the repository

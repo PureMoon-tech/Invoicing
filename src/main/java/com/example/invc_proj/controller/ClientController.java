@@ -1,5 +1,6 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.dto.ClientDTO;
 import com.example.invc_proj.dto.ClientDropdownDTO;
 import com.example.invc_proj.model.Client;
 import com.example.invc_proj.service.ClientService;
@@ -42,8 +43,8 @@ public class ClientController {
     // Add a new client
     @PostMapping("/client")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addClient(@RequestBody Client client) {
-        service.addClient(client);
+    public ResponseEntity<String> addClient(@RequestBody ClientDTO clientDTO) {
+        service.addClient(clientDTO);
         return ResponseEntity.status(201).body("Client added successfully");
     }
 

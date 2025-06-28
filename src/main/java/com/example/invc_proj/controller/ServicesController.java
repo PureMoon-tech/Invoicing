@@ -1,6 +1,7 @@
 package com.example.invc_proj.controller;
 
 
+import com.example.invc_proj.dto.ServicesDTO;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.service.Process_Invoice;
 import com.example.invc_proj.service.ProductService;
@@ -39,7 +40,7 @@ public class ServicesController
 
         @PostMapping("/services")
         @PreAuthorize("hasRole('ADMIN')")
-            public ResponseEntity<String> addServices(@RequestBody Services srvc)
+            public ResponseEntity<String> addServices(@RequestBody ServicesDTO srvc)
             {
                 service.addServices(srvc);
                 return ResponseEntity.status(201).body("Service added successfully");

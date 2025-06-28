@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
@@ -22,21 +23,24 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    @Autowired
-     private final UserRepo User_repo;
-
-    @Autowired
+    private final UserRepo User_repo;
     private final RoleRepository role_repo;
+    private final EmailService emailService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
 
 
-    public UserService(UserRepo User_repo,RoleRepository role_repo)
+
+
+    @Autowired
+    public UserService(UserRepo User_repo,RoleRepository role_repo, EmailService emailService)
     {
      this.User_repo = User_repo;
      this.role_repo = role_repo;
+     this.emailService = emailService;
+        //this.userRepository = userRepository;
     }
 
     public List<User> getUsers()
@@ -89,16 +93,25 @@ public class UserService {
         NewUser.setPassword(encodedPassword);
         System.out.println(user.getPassword());
         NewUser.setPasswordSalt(user.getPasswordSalt());
+
+        if(User_repo.existsByEmailId(user.getEmailId())) {
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
+            throw new RuntimeException("Email Id Already Exists");
+        }
+
         NewUser.setEmailId(user.getEmailId());
+
         System.out.println(NewUser);
         User_repo.save(NewUser);
         System.out.println(NewUser);
+        emailService.sendWelcomeEmail(NewUser.getEmailId(),NewUser.getUsername());
 
         return ResponseEntity.ok("User added successfully");
     }
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder2;
+    //private final User_repo userRepository;
 
     public void encryptExistingPasswords()
     {
@@ -121,6 +134,16 @@ public class UserService {
 
     public void alterUser(User user)
     {
+        //Validate password strength method needs to added and few more validators, to have strong password
+        if (user.getPassword().length() < 8)
+        {
+            //return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
+            throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
+        }
+        if(User_repo.existsByEmailId(user.getEmailId())) {
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
+            throw new RuntimeException("Email Id Already Exists");
+        }
         User_repo.save(user);
     }
 
@@ -139,6 +162,10 @@ public class UserService {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
         {
             throw new InvalidOldPasswordException("Old password is incorrect");
+        }
+
+        if (request.getOldPassword().equals(request.getNewPassword())) {
+            throw new IllegalArgumentException("New password must be different from the old password");
         }
 
         // Validate new password strength need to include few more validators to have strong password

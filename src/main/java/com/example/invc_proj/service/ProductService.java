@@ -1,5 +1,7 @@
 package com.example.invc_proj.service;
 
+import com.example.invc_proj.dto.ServicesDTO;
+import com.example.invc_proj.mapper.ServicesDTOMapper;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +77,10 @@ public class ProductService {
     }
 
 
-  public void addServices(Services srvc) {
-    repository_srvc.save(srvc);
+  public void addServices(ServicesDTO srvc)
+  {
+     Services services = ServicesDTOMapper.mapToService(srvc);
+    repository_srvc.save(services);
   }
 
   public void  CreateInvoice(Invoice invc)  { repository_invc.save(invc); }

@@ -1,6 +1,8 @@
 package com.example.invc_proj.service;
 
+import com.example.invc_proj.dto.ClientDTO;
 import com.example.invc_proj.dto.ClientDropdownDTO;
+import com.example.invc_proj.mapper.ClientDTOMapper;
 import com.example.invc_proj.model.Client;
 import com.example.invc_proj.repository.ClientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,10 @@ public class ClientService {
     }
 
     // Add a new client
-    public void addClient(Client client) {
+    public void addClient(ClientDTO clientDTO) {
+
+        Client client = ClientDTOMapper.mapToClient(clientDTO);
+        //client = ClientDTOMapper.mapToClient(clientDTO);
         clientRepo.save(client);
     }
 

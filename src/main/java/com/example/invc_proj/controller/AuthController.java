@@ -3,7 +3,11 @@ package com.example.invc_proj.controller;
 import com.example.invc_proj.dto.AuthRequest;
 import com.example.invc_proj.dto.AuthResponse;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
+import com.example.invc_proj.model.AuditLog;
+import com.example.invc_proj.repository.AudtiLogRepo;
 import com.example.invc_proj.security.JwtUtil;
+import com.example.invc_proj.service.PasswordResetService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +38,9 @@ import java.util.List;
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AudtiLogRepo audtiLogRepo;
 
     //@Autowired
    // private LicenseManager licenseManager;
@@ -173,6 +181,22 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         }
         */
 
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            String username = auth.getName();
+            AuditLog log = new AuditLog();
+            log.setUsername(username);
+            log.setAction("LOGOUT");
+            log.setTimestamp(LocalDateTime.now());
+            audtiLogRepo.save(log);
+        }
+
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String tokenHeader) {
         try {
@@ -199,7 +223,20 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         }
     }
 
+    @Autowired
+    private PasswordResetService resetService;
 
+    @PostMapping("/request-reset")
+    public ResponseEntity<?> requestReset(@RequestParam String email) {
+        resetService.createAndSendResetToken(email);
+        return ResponseEntity.ok("Password reset email sent");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        resetService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password has been reset successfully");
+    }
 
 }
 
