@@ -3,6 +3,7 @@ package com.example.invc_proj.controller;
 import com.example.invc_proj.dto.ReceiptRequestDTO;
 import com.example.invc_proj.dto.ReceiptResponseDTO;
 import com.example.invc_proj.service.ReceiptService;
+import com.example.invc_proj.service.ReceiptServiceOld;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

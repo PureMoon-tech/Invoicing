@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/migrate-passwords").permitAll()
+                        .requestMatchers("/user-config/users").permitAll()
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )

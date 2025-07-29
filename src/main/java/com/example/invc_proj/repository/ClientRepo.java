@@ -24,4 +24,7 @@ public interface ClientRepo extends JpaRepository<Client, Integer>
     @Query("SELECT new com.example.invc_proj.dto.ClientDropdownDTO(c.client_id, c.client_name, c.client_type) " +
             "FROM Client c")
     List<ClientDropdownDTO> findClientsForDropdown();
+
+    Optional<Client> findByUpiIdOrAccountNumber(String upiId, String accountNumber);
+
 }

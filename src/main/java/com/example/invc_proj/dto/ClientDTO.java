@@ -1,9 +1,12 @@
 package com.example.invc_proj.dto;
 
 import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ClientDTO {
 
     private String client_name;
@@ -16,13 +19,15 @@ public class ClientDTO {
     private String pan_no;
     private String GSTN;
     private String aadhaar_no;
+    private String accountNumber;
+    private String upiId;
     private String address;
     private String pincode;
 
 
     public ClientDTO(String client_name, String client_type, String primary_mobile_number,String primary_email_id,
                      String secondary_mobile_number,String secondary_email_id, String occupation, String pan_no,
-                     String GSTN, String aadhaar_no, String address, String pincode)
+                     String GSTN, String aadhaar_no, String address, String pincode, String accountNumber, String upiId)
     {
         this.client_name = client_name;
         this.client_type = client_type;
@@ -36,6 +41,8 @@ public class ClientDTO {
         this.aadhaar_no = aadhaar_no;
         this.address = address;
         this.pincode = pincode;
+        this.accountNumber = accountNumber;
+        this.upiId = upiId;
     }
 
 

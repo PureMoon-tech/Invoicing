@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,7 +94,8 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(rawPassword);
         NewUser.setPassword(encodedPassword);
         System.out.println(user.getPassword());
-        NewUser.setPasswordSalt(user.getPasswordSalt());
+        //NewUser.setPasswordSalt(user.getPasswordSalt());
+        NewUser.setPasswordSalt(rawPassword);
 
         if(User_repo.existsByEmailId(user.getEmailId())) {
             //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");

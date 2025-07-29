@@ -18,10 +18,18 @@ public class UserPrincipal implements UserDetails {
         this.User = User;
     }
 
-    @Override
+   /* @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("user"));
+    }*/
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities()
+    {
+        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + User.getRole().getRoleName()));
     }
+
+
 
     @Override
     public String getPassword() {

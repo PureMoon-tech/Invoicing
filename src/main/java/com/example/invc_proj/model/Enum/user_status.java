@@ -1,4 +1,4 @@
-package com.example.invc_proj.model;
+package com.example.invc_proj.model.Enum;
 
 public enum user_status {
     ACTIVE,

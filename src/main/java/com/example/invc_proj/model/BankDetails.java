@@ -16,7 +16,7 @@ public class BankDetails {
 
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bank_id", unique = true, nullable = false)
     private int bank_id;
     private String account_holder_name;

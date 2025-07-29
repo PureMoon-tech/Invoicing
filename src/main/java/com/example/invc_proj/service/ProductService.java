@@ -69,10 +69,11 @@ public class ProductService {
     }
 
 
-    public List<ServicesRequested> getServicesRequestedByInvoice(int invoiceId)
+    public List<ServicesRequested> getServicesRequestedByInvoice(Long invoiceId)
     {
       System.out.println("get by id"+invoiceId);
-      List<ServicesRequested> servicesRequested = repository_invc_srvc.findById(invoiceId);
+      List<ServicesRequested> servicesRequested = repository_invc_srvc.findByInvoiceId(invoiceId);
+        //repository_invc_srvc.findById(invoiceId)
       return servicesRequested;
     }
 

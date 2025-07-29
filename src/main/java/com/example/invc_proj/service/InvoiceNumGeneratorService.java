@@ -2,7 +2,7 @@ package com.example.invc_proj.service;
 
 
 import com.example.invc_proj.model.InvoiceSequence;
-import com.example.invc_proj.model.InvoiceType;
+import com.example.invc_proj.model.Enum.InvoiceType;
 import com.example.invc_proj.repository.InvoiceSequenceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

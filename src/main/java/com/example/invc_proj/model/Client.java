@@ -40,6 +40,10 @@ public class Client {
     @Column(name = "adhaar_no", length = 12)
     private String adhaar_no;
 
+    private String accountNumber;
+
+    private String upiId;
+
     @Column(name = "address", length = 255)
     private String address;
 

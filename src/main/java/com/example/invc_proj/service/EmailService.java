@@ -15,7 +15,9 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
         message.setSubject("Welcome to BillMitra!");
-        message.setText("Hi " + userName + ",\n\nWelcome to BillMitra! We're excited to have you on board.\n\nBest Regards,\nPureMoon-Tech");
+        message.setText("Hi " + userName + ",\n\nWelcome to BillMitra! We're excited to have you on board." +
+                                             "\n\nBest Regards," +
+                                             "\nPureMoon-Tech");
         mailSender.send(message);
     }
 

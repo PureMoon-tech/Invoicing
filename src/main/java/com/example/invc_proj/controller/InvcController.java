@@ -24,7 +24,7 @@ public class InvcController {
     }
 
     @GetMapping("/servicesRequested/{invoice_id}")
-    public ResponseEntity<List<ServicesRequested>> getAllServicesRequested(@PathVariable int invoice_id)
+    public ResponseEntity<List<ServicesRequested>> getAllServicesRequested(@PathVariable Long invoice_id)
     {
         System.out.println("calling getServicesRequestedByInvoice");
         List<ServicesRequested> servicesRequested =   service.getServicesRequestedByInvoice(invoice_id);

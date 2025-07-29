@@ -16,9 +16,9 @@ public interface ServicesRequestedRepo extends JpaRepository<ServicesRequested, 
     //List<ServicesRequested> findByInvoice(Invoice invoice);
 
     @Query("SELECT s FROM ServicesRequested s WHERE s.invoice_id.invoice_id = :invoiceId")
-    List<ServicesRequested> findByInvoiceId(@Param("invoiceId") int invoiceId);
+    List<ServicesRequested> findByInvoiceId(@Param("invoiceId") Long invoiceId);
 
-    List<ServicesRequested> findById(int invoice_id);
+
 
 
 }

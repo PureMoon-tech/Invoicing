@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +25,7 @@ public class Receipt {
     @JoinColumn(name = "invoice_id", nullable = false)
     private Invoice invoice;
 
-    private long amount;
+    private BigDecimal amount;
     private LocalDateTime payment_date;
     private String payment_mode;
     private String reference;

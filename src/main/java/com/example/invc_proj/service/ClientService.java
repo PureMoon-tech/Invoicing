@@ -19,7 +19,8 @@ public class ClientService {
     private final ClientRepo clientRepo;
 
     @Autowired
-    public ClientService(ClientRepo clientRepo) {
+    public ClientService(ClientRepo clientRepo)
+    {
         this.clientRepo = clientRepo;
     }
 
@@ -33,6 +34,9 @@ public class ClientService {
 
     // Update an existing client
     public boolean updateClient(Client client) {
+
+       // Client client = ClientDTOMapper.mapToClient(clientDTO);
+
         Optional<Client> existingClient = clientRepo.findById(client.getClient_id());
         if (existingClient.isPresent()) {
 
@@ -50,6 +54,8 @@ public class ClientService {
             updatedClient.setAddress(client.getAddress());
             updatedClient.setPincode(client.getPincode());
             updatedClient.setGSTN(client.getGSTN());
+            updatedClient.setAccountNumber(client.getAccountNumber());
+            updatedClient.setUpiId(client.getUpiId());
 
             clientRepo.save(updatedClient);
             return true;
@@ -89,6 +95,13 @@ public class ClientService {
         //return clientRepo.findById(clientId);
         return Optional.ofNullable(clientRepo.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client not found")));
+    }
+
+    // Get full client details by ID
+    public ClientDTO getClientDTOById(int clientId) {
+        return clientRepo.findById(clientId)
+                .map(ClientDTOMapper::mapToClientDTO)
+                .orElseThrow(() -> new RuntimeException("Client not found"));
     }
 
     public void removeClient(int pClientId)

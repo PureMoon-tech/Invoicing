@@ -21,10 +21,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class InvoicePdfService {
 
+    @Autowired
     private ClientRepo clientRepository;
 
+    @Autowired
     private BankRepo bankRepository;
 
+    @Autowired
     private ServicesRepo servicesRespository;
 
     public byte[] generateInvoicePdf(Invoice invoice, List<ServicesRequested> services) {
@@ -84,14 +87,17 @@ public class InvoicePdfService {
 
 // Initialize totals
             BigDecimal totalServiceCost = BigDecimal.ZERO;
-            int totalGstValue = 0;
-            int totalTdsValue = 0;
+            BigDecimal totalGstValue = BigDecimal.ZERO;
+            BigDecimal totalTdsValue = BigDecimal.ZERO;
 
 // Sum up the values for all services
             for (ServicesRequested service : services) {
-                totalServiceCost = totalServiceCost.add(BigDecimal.valueOf(service.getService_cost()));
-                totalGstValue += service.getGst_value();
-                totalTdsValue += service.getTds_value();
+                totalServiceCost = totalServiceCost.add(service.getService_cost());
+                //totalGstValue += service.getGst_value();
+                //totalTdsValue += service.getTds_value();
+                totalGstValue = totalGstValue.add(service.getGst_value());
+                totalTdsValue = totalTdsValue.add(service.getTds_value());
+
             }
 
 // Display the total values in the invoice

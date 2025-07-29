@@ -30,7 +30,7 @@ public class ClientController {
     }
 
     // Get Client by ID
-    @GetMapping("/client/{ClientId}")
+   @GetMapping("/client/{ClientId}")
     public ResponseEntity<Client> getClientById(@PathVariable int ClientId) {
         Optional<Client> client = service.getClientById(ClientId);
         if (client.isPresent()) {
@@ -40,6 +40,12 @@ public class ClientController {
         }
     }
 
+   /* @GetMapping("/client/{ClientId}")
+    public ResponseEntity<ClientDTO> getClientDTOById(@PathVariable int ClientId) {
+        ClientDTO client = service.getClientDTOById(ClientId);
+        return ResponseEntity.ok(client);
+    }
+*/
     // Add a new client
     @PostMapping("/client")
     @PreAuthorize("hasRole('ADMIN')")

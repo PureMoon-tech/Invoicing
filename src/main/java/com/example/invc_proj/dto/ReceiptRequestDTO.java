@@ -6,8 +6,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class ReceiptRequestDTO {
-    private int invoiceId;
-    private long amount;
+    private long invoiceId;
+    private Long amount;
     private LocalDateTime paymentDate;
     private String paymentMode;
     private String reference;

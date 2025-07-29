@@ -1,6 +1,8 @@
 package com.example.invc_proj.service;
 
+import com.example.invc_proj.dto.BankDetailsDTO;
 import com.example.invc_proj.dto.BankDropdownDTO;
+import com.example.invc_proj.mapper.BankDetailsDTOMapper;
 import com.example.invc_proj.model.BankDetails;
 import com.example.invc_proj.repository.BankRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BankService {
@@ -21,9 +24,13 @@ public class BankService {
         this.repository_bnk = repository_bnk;
     }
 
-    public List<BankDetails> getAllBankDetails()
+    public List<BankDetailsDTO> getAllBankDetails()
     {
-        return repository_bnk.findAll();
+        List<BankDetailsDTO> bankDTOList = repository_bnk.findAll()
+                .stream()
+                .map(BankDetailsDTOMapper::toDTO)
+                .collect(Collectors.toList());
+         return  bankDTOList;
     }
 
     public Optional<BankDetails> getBankDetailsById(int id)
@@ -43,9 +50,10 @@ public class BankService {
     }
 
 
-    public void addBankDetails(BankDetails bnk)
+    public void addBankDetails(BankDetailsDTO bnk)
     {
-        repository_bnk.save(bnk);
+        BankDetails Bank = BankDetailsDTOMapper.toEntity(bnk);
+        repository_bnk.save(Bank);
     }
 
     public void deleteBankDetails(int pBankId)

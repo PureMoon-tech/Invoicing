@@ -1,6 +1,5 @@
 package com.example.invc_proj.service;
 
-
 import com.example.invc_proj.dto.ReceiptRequestDTO;
 import com.example.invc_proj.dto.ReceiptResponseDTO;
 import com.example.invc_proj.model.Enum.InvoiceStatus;
@@ -11,15 +10,14 @@ import com.example.invc_proj.repository.ReceiptRepo;
 import com.example.invc_proj.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ReceiptService {
+public class ReceiptServiceOld {
 
     @Autowired
     private ReceiptRepo receiptRepository;
@@ -30,62 +28,52 @@ public class ReceiptService {
     @Autowired
     private UserRepo userRepository;
 
-    // 🔁 Used for scheduled or reconciliation-driven receipt generation
-    public void generateAndSave(Invoice invoice, BigDecimal paymentAmount) {
-        Receipt receipt = new Receipt();
-
-        receipt.setInvoice(invoice);
-        receipt.setAmount(paymentAmount);
-        receipt.setPayment_date(LocalDateTime.now());
-        receipt.setPayment_mode("BANK"); // default mode for auto-recon
-        receipt.setReference("AUTO-" + UUID.randomUUID());
-        receipt.setRemarks("Automated reconciliation payment");
-
-        // If you want to tag the system user
-        userRepository.findByUsername("system").ifPresent(receipt::setAcknowledgedBy);
-
-        receiptRepository.save(receipt);
-    }
-
-    // 🔁 Used for manual receipt creation
     public ReceiptResponseDTO addReceipt(ReceiptRequestDTO request) {
         Receipt receipt = new Receipt();
+        LocalDateTime PaymentDate = request.getPaymentDate();
+        if(PaymentDate == null)
+        {
+            PaymentDate = LocalDateTime.now();
+        }
 
-        LocalDateTime paymentDate = request.getPaymentDate() != null ? request.getPaymentDate() : LocalDateTime.now();
-        receipt.setPayment_date(paymentDate);
+        receipt.setPayment_date(PaymentDate);
+
         receipt.setPayment_mode(request.getPaymentMode());
         receipt.setReference(request.getReference());
         receipt.setRemarks(request.getRemarks());
+        receipt.setAmount(BigDecimal.valueOf(request.getAmount()));
 
-        Invoice invoice = invoiceRepository.findById(request.getInvoiceId())
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+        Invoice invc = invoiceRepository.findById(request.getInvoiceId()).orElseThrow(() -> new RuntimeException("Invoice not found"));
+        receipt.setInvoice(invc);
 
-        BigDecimal paidSoFar = invoice.getAmountPaid() != null ? invoice.getAmountPaid() : BigDecimal.ZERO;
-        BigDecimal totalAmount = invoice.getTotal();
-        BigDecimal thisAmount = BigDecimal.valueOf(request.getAmount());
-        BigDecimal newPaid = paidSoFar.add(thisAmount);
+        BigDecimal Amount = invc.getTotal();
+        InvoiceStatus Status = invc.getStatus();
 
-        if (newPaid.compareTo(totalAmount) > 0) {
-            throw new RuntimeException("Payment exceeds invoice amount "+paidSoFar+" "+thisAmount+" "+newPaid+" "+totalAmount);
+        if(Status.equalsIgnoreCase("UNPAID")) {
+            if (Amount.equals(request.getAmount())) 
+            {
+                receipt.setAmount(BigDecimal.valueOf(request.getAmount()));
+            } else {
+                throw new RuntimeException("Enter Valid Invoice Amount" + Amount +" "+receipt.getAmount());
+            }
+        }
+        else if(Status.equalsIgnoreCase("PAID"))
+        {
+
+                 //   .stripTrailingZeros()
+            if (Amount.stripTrailingZeros().equals(BigDecimal.valueOf(request.getAmount()).stripTrailingZeros())) {
+                receipt.setAmount(BigDecimal.valueOf(request.getAmount()));
+            } else {
+                throw new RuntimeException("Enter Valid Invoice Amount" + Amount +" "+receipt.getAmount());
+            }
         }
 
-        // Update invoice state
-        invoice.setAmountPaid(newPaid);
-        if (newPaid.compareTo(totalAmount) == 0) {
-            invoice.setStatus(InvoiceStatus.PAID);
-            //invoice.setPaidDate(LocalDateTime.now());
-        } else {
-            invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
-        }
-
-        invoiceRepository.save(invoice);
-
-        receipt.setInvoice(invoice);
-        receipt.setAmount(thisAmount);
         receipt.setAcknowledgedBy(userRepository.findById(request.getAcknowledgedByUserId())
                 .orElseThrow(() -> new RuntimeException("User not found")));
 
-        return mapToResponse(receiptRepository.save(receipt));
+        receipt = receiptRepository.save(receipt);
+
+        return mapToResponse(receipt);
     }
 
     public List<ReceiptResponseDTO> getReceiptsByInvoiceId(int invoiceId) {
@@ -94,6 +82,7 @@ public class ReceiptService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
+
 
     public ReceiptResponseDTO getReceiptById(int receiptId) {
         Receipt receipt = receiptRepository.findById(receiptId)
@@ -109,11 +98,10 @@ public class ReceiptService {
         dto.setPaymentDate(receipt.getPayment_date());
         dto.setPaymentMode(receipt.getPayment_mode());
         dto.setReference(receipt.getReference());
-        dto.setAcknowledgedBy(
-                receipt.getAcknowledgedBy() != null ? receipt.getAcknowledgedBy().getUsername() : "System"
-        );
+        dto.setAcknowledgedBy(receipt.getAcknowledgedBy().getUsername()); // adjust based on your user fields
         dto.setRemarks(receipt.getRemarks());
         dto.setInsertedOn(receipt.getInserted_on());
         return dto;
     }
 }
+

@@ -15,9 +15,10 @@ import java.util.Date;
 public class Services {
 
     @Id
-   // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_id", unique = true, nullable = false)
     private int service_id;
+
     private String service_name;
     private String service_description;
     private int sac_code;
@@ -25,7 +26,11 @@ public class Services {
     private BigDecimal max_price;
     private int gst_rate;
     private boolean status;
+
+    @Column(name = "inserted_on", insertable = false, updatable = false)
     private Date inserted_on;
+
+    @Column(name = "release_date", insertable = false, updatable = false)
     private Date releaseDate;
 
 

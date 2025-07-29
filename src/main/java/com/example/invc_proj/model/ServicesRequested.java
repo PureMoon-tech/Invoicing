@@ -31,11 +31,11 @@ public class ServicesRequested {
 
     private int user_id;
     private int client_id;
-    private int service_cost;
+    private BigDecimal service_cost;
     private int tds_rate;
     private int gst_rate;
-    private int tds_value;
-    private int gst_value;
+    private BigDecimal tds_value;
+    private BigDecimal gst_value;
     private BigDecimal service_total;
     private Date last_update_date;
 

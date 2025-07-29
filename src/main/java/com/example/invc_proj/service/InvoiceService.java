@@ -2,6 +2,8 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.*;
+import com.example.invc_proj.model.Enum.InvoiceStatus;
+import com.example.invc_proj.model.Enum.InvoiceType;
 import com.example.invc_proj.repository.ClientRepo;
 import com.example.invc_proj.repository.InvoiceRepo;
 import com.example.invc_proj.repository.ServicesRepo;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +41,7 @@ public class InvoiceService {
     private InvoiceNumGeneratorService invoiceNumGeneratorService;
 
 
-    public Invoice generateInvoice(int clientId, int bankId , String invoiceStatus,InvoiceType invoiceType,List<ServiceCostRequest> serviceCosts) {
+    public Invoice generateInvoice(int clientId, int bankId , InvoiceStatus invoiceStatus, InvoiceType invoiceType,BigDecimal amountPaid, List<ServiceCostRequest> serviceCosts) {
 
         // Get the currently authenticated user's username
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
@@ -91,8 +94,10 @@ public class InvoiceService {
         // Create the Invoice object
         Invoice invoice = new Invoice();
         invoice.setClient_id(clientId);
-        invoice.setTotal(totalAmount.intValue()); // Setting the total amount as an integer (you can choose to keep it BigDecimal as well)
-        invoice.setStatus(invoiceStatus);  // Default status
+        invoice.setTotal(totalAmount); // Setting the total amount as an integer (you can choose to keep it BigDecimal as well)
+        invoice.setAmountPaid(amountPaid);
+        //invoice.setStatus(invoiceStatus);  // Default status
+        invoice.setStatus(validateInvoiceStatus(null,totalAmount,amountPaid,invoiceStatus));
         invoice.setInvoice_generated_date(new Date());
         invoice.setLast_updated_date(new Date());
         invoice.setUser_id(userId); // Set the logged-in user's ID
@@ -112,16 +117,13 @@ public class InvoiceService {
         }
         // Save all the services requested for this invoice
         servicesRequestedRepository.saveAll(servicesRequestedList);
-
-
-
         return savedInvoice;
     }
 
     //Method to calculate TDS rate
     private int calculateTdsRate(Services service) {
         // TDS rate might depend on the service type
-        return 10; // Assuming a fixed TDS rate for simplicity
+        return 2; // Assuming a fixed TDS rate for simplicity
     }
 
     // Method to calculate GST rate
@@ -132,34 +134,57 @@ public class InvoiceService {
 
     // Calculate the total amount for the service (including GST, TDS, etc.)
     private BigDecimal calculateServiceTotal(ServicesRequested servicesRequested) {
-        int serviceCost = servicesRequested.getService_cost();
+        BigDecimal serviceCost = servicesRequested.getService_cost();
         int gstRate = servicesRequested.getGst_rate();
-        double gstValue = calculateGST(serviceCost,gstRate);
-        servicesRequested.setGst_value((int)(gstValue));
+        int tdsRate = servicesRequested.getTds_rate();
+        BigDecimal gstValue = calculateGST(serviceCost,gstRate);
+        BigDecimal tdsValue = calculateTDS(serviceCost,tdsRate);
+        servicesRequested.setGst_value(gstValue);
+        servicesRequested.setTds_value(tdsValue);
+        return serviceCost
+                .add(gstValue)
+                .add(tdsValue)
+                .setScale(2, RoundingMode.HALF_UP);
         //int tdsValue = serviceCost.multiply(BigDecimal.valueOf(tdsRate)).divide(BigDecimal.valueOf(100));
         //double tdsValue = calculateTDS(total,tdsRate);
         // Calculate the total cost for the service (including GST, subtracting TDS)
         // int tdsRate = servicesRequested.getTds_rate();
         //int gstValue = serviceCost.multiply(BigDecimal.valueOf(gstRate)).divide(BigDecimal.valueOf(100));
-        return BigDecimal.valueOf(serviceCost+gstValue);
+        //return BigDecimal.valueOf(serviceCost+gstValue);
+
+
     }
      private BigDecimal calculateTotalCost;
 
 
-    public double calculateGST(double total, int gstRate)
+   /* public double calculateGST(double total, int gstRate)
     {
         double gst_value =0;
         gst_value = (total * gstRate/100) ;
         //gst_value = total + gst_value; if grand total is being calulated
         return gst_value;
-    }
+    }*/
+   public BigDecimal calculateGST(BigDecimal total, int gstRate) {
+       BigDecimal rate = BigDecimal.valueOf(gstRate).divide(BigDecimal.valueOf(100)); // Converts gstRate to a percentage
+       BigDecimal gstValue = total.multiply(rate).setScale(2, RoundingMode.HALF_UP); // Calculates GST with rounding
+       return gstValue;
+   }
 
-    public double calculateTDS( double total, int tdsRate)
+
+  /*  public double calculateTDS( double total, int tdsRate)
     {
         double tds_value=0;
         tds_value = (total * tdsRate/100) ;
         //gst_value = total + gst_value; if grand total is being calulated
         return tds_value;
+
+    }
+   */
+    public BigDecimal calculateTDS( BigDecimal total, int tdsRate)
+    {
+        BigDecimal rate = BigDecimal.valueOf(tdsRate).divide(BigDecimal.valueOf(100)); // Converts gstRate to a percentage
+        BigDecimal tdsValue = total.multiply(rate).setScale(2, RoundingMode.HALF_UP); // Calculates GST with rounding
+        return tdsValue;
     }
 
     public double calculateTotalCost( double total, double gstValue, double tdsValue)
@@ -167,18 +192,28 @@ public class InvoiceService {
        return total+gstValue-tdsValue;
     }
 
-    public Invoice updateInvoiceStatus(Integer pInvoiceId, String pInvoiceStatus)
+    public Invoice updateInvoiceStatus(Long pInvoiceId, InvoiceStatus pInvoiceStatus,BigDecimal pAmountPaid)
     {
         Invoice invoice = invoiceRepository.findById(pInvoiceId).
-                orElseThrow(()-> new RuntimeException("Service not found"));
-        invoice.setStatus(pInvoiceStatus);
+                orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
+        //invoice.setStatus(pInvoiceStatus);
+        BigDecimal total = invoice.getTotal();
+        invoice.setAmountPaid(updateAmountPaid(pInvoiceId,pAmountPaid));
+        BigDecimal updatedAmountPaid = invoice.getAmountPaid();
+        invoice.setStatus(validateInvoiceStatus(pInvoiceId,total,updatedAmountPaid,pInvoiceStatus));
         Invoice updatedInvoice = invoiceRepository.save(invoice);
-
         return updatedInvoice;
 
     }
 
-    public void deleteInvoice(Integer pInvoiceId) {
+    private BigDecimal updateAmountPaid(Long pInvoiceId, BigDecimal pAmountPaid)
+    {
+        Invoice invoice = invoiceRepository.findById(pInvoiceId).
+                orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
+        return pAmountPaid.add(invoice.getAmountPaid());
+    }
+
+    public void deleteInvoice(Long pInvoiceId) {
         List<ServicesRequested> servicesRequested = servicesRequestedRepository.findByInvoiceId(pInvoiceId);
 
           if (servicesRequested == null)
@@ -196,5 +231,43 @@ public class InvoiceService {
                   orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
            invoiceRepository.delete(invoice);
 
+    }
+
+    public InvoiceStatus validateInvoiceStatus(Long InvoiceId,BigDecimal TotalAmount, BigDecimal AmountPaid, InvoiceStatus status)
+    {
+        if (InvoiceId==null)
+        {
+           int result = TotalAmount.compareTo(AmountPaid);
+
+            if (result==0)
+            {
+                return InvoiceStatus.PAID;
+            }
+            else if(result>0)
+            {
+                return InvoiceStatus.PARTIALLY_PAID;
+            }
+            else
+            {
+                return InvoiceStatus.UNPAID;
+            }
+        }
+        else
+        {
+            Optional<Invoice> invc = invoiceRepository.findById(InvoiceId);
+            BigDecimal PaidAmount = invc.get().getAmountPaid();
+            int result =  TotalAmount.compareTo(AmountPaid.add(PaidAmount));
+            if (result==0)
+            {
+                return InvoiceStatus.PAID;
+            }
+            else if(result>0)
+            {
+                BigDecimal amount = invc.get().getTotal();
+                BigDecimal amountPaid = AmountPaid.add(PaidAmount);
+                return InvoiceStatus.PARTIALLY_PAID;
+            }
+        }
+        return status;
     }
 }

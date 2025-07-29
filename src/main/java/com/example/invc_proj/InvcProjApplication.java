@@ -11,10 +11,10 @@ public class InvcProjApplication {
 
 	public static void main(String[] args)
 	{
-		//SpringApplication.run(InvcProjApplication.class, args);
-		SpringApplication app = new SpringApplication(InvcProjApplication.class);
+		SpringApplication.run(InvcProjApplication.class, args);
+		/*SpringApplication app = new SpringApplication(InvcProjApplication.class);
 		app.setAdditionalProfiles("default");
-		app.run(args);
+		app.run(args);*/
 	}
 
 }

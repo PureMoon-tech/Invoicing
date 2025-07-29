@@ -1,5 +1,6 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.dto.BankDetailsDTO;
 import com.example.invc_proj.dto.BankDropdownDTO;
 import com.example.invc_proj.model.BankDetails;
 import com.example.invc_proj.model.BankDetailsDropDown;
@@ -25,9 +26,9 @@ public class BankController
     private BankService service;
 
     @GetMapping("/bankdetails")
-    public ResponseEntity<List<BankDetails>> getAllBankDetails()
+    public ResponseEntity<List<BankDetailsDTO>> getAllBankDetails()
     {
-        List<BankDetails> bankDetails = service.getAllBankDetails();
+        List<BankDetailsDTO> bankDetails = service.getAllBankDetails();
         return ResponseEntity.ok(bankDetails);
     }
 
@@ -71,7 +72,7 @@ public class BankController
 
     @PostMapping("/bankdetails")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addBankDetails(@RequestBody BankDetails bnk)
+    public ResponseEntity<String> addBankDetails(@RequestBody BankDetailsDTO bnk)
     {
         try {
             //logger.info("Received request to add bank details: {}", bnk);

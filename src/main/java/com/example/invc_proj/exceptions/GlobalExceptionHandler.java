@@ -10,11 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-   /* @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
-        return new ResponseEntity<>("Oops! Error: " + ex.getMessage(),
-                                     HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception ex, HttpServletRequest request) {
@@ -27,13 +22,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 
-    /*@ExceptionHandler(RuntimeException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<String>  handleRuntimeException(RuntimeException ex) {
-        return new ResponseEntity<>("Error: " + ex.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }*/
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiError> handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
         ApiError apiError = new ApiError(
@@ -45,12 +33,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
     }
 
-    /*@ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String>  handleIllegalArgumentException(IllegalArgumentException ex) {
-        return new ResponseEntity<>("Invalid input: " +
-                ex.getMessage(),HttpStatus.BAD_REQUEST);
-    }*/
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiError> handleIllegalArgumentException(IllegalArgumentException ex, HttpServletRequest request) {
@@ -86,4 +68,22 @@ public class GlobalExceptionHandler {
     }
 }
 
+    /*@ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String>  handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>("Invalid input: " +
+                ex.getMessage(),HttpStatus.BAD_REQUEST);
+    }*/
+   /* @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception ex) {
+        return new ResponseEntity<>("Oops! Error: " + ex.getMessage(),
+                                     HttpStatus.INTERNAL_SERVER_ERROR);
+    }*/
+
+    /*@ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<String>  handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>("Error: " + ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }*/
 
