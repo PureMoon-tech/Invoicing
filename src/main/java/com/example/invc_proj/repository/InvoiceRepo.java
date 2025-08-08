@@ -15,8 +15,9 @@ import java.util.Optional;
 public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
 
     // Fetch the earliest unpaid or partially paid invoice for a client
-   // Optional<Invoice> findTopByClientAndStatusInOrderByIssueDateAsc(int client_id, List<InvoiceStatus> statuses);
-  //  @Query("SELECT i FROM Invoice i WHERE i.client.id = :clientId AND i.status IN :statuses ORDER BY i.issueDate ASC")
+    @Query(value = "SELECT i FROM Invoice i WHERE i.client.id = :clientId AND i.status IN :statuses ORDER BY i.Invoice_generated_date ASC",nativeQuery = true)
+    Optional<Invoice> findTopByClient_idAndStatusInOrderByInvoice_generated_dateAsc(int client_id, List<InvoiceStatus> statuses);
+
 //    Optional<Invoice> findTopByClientAndStatusInOrderByIssueDateAsc(@Param("clientId") int clientId, @Param("statuses") List<InvoiceStatus> statuses);
 
     //Optional<Invoice> findTopByClient_idAndStatusInOrderByInvoice_generated_dateAsc(int client_id, List<InvoiceStatus> statuses);

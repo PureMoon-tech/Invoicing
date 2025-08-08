@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class BankReconciliationService {
-/*
+
     private final BankStatementUploadRepository uploadRepo;
     private final InvoiceRepo invoiceRepo;
     private final ClientRepo clientRepo;
@@ -181,6 +181,6 @@ public class BankReconciliationService {
                 .matcher(description);
         return m.find() ? m.group() : null;
     }
-*/
+
 
 }

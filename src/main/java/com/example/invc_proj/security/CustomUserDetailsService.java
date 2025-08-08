@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new UserPrincipal(user); // 🔁 Use your own UserPrincipal here
     }
 
-
+}
     /*@Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
@@ -37,7 +37,3 @@ public class CustomUserDetailsService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().getRoleName()))
         );
     }*/
-
-
-}
-
