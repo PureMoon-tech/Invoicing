@@ -1,11 +1,15 @@
 package com.example.invc_proj.dto;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ServiceCostRequest {
         private int serviceId;        // The ID of the service selected by the user
         private String serviceName;    // The name of the service selected by the user

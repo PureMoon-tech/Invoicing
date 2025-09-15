@@ -5,6 +5,7 @@ import com.example.invc_proj.model.UserPrincipal;
 import com.example.invc_proj.repository.AudtiLogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.event.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,21 +61,25 @@ import java.time.LocalDateTime;
         private AudtiLogRepo auditLogRepository;
 
         @EventListener
+        @Async
         public void onSuccess(AuthenticationSuccessEvent event) {
             logAuthEvent(event.getAuthentication(), "LOGIN");
         }
 
         @EventListener
+        @Async
         public void onFailure(AuthenticationFailureBadCredentialsEvent event) {
             logAuthEvent(event.getAuthentication(), "LOGIN_FAILED INCORRECT CREDENTIALS");
         }
 
         @EventListener
+        @Async
         public void onFailure(AuthenticationFailureCredentialsExpiredEvent event) {
             logAuthEvent(event.getAuthentication(), "LOGIN_FAILED CREDENTIALS EXPIRED");
         }
 
         @EventListener
+        @Async
         public void onLogout(LogoutSuccessEvent event) {
             Authentication auth = event.getAuthentication();
             logAuthEvent(auth, "LOGOUT");

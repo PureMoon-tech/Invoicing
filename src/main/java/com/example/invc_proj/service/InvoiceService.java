@@ -9,6 +9,9 @@ import com.example.invc_proj.repository.InvoiceRepo;
 import com.example.invc_proj.repository.ServicesRepo;
 import com.example.invc_proj.repository.ServicesRequestedRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -270,4 +273,14 @@ public class InvoiceService {
         }
         return status;
     }
+
+    public Page<Invoice> searchInvoices(int clientId,
+                                        List<InvoiceStatus> statuses,
+                                        Long invoiceId,
+                                        int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return invoiceRepository.findByClientIdAndStatusesAndOptionalInvoiceId(clientId, statuses, invoiceId, pageable);
+    }
+
+
 }

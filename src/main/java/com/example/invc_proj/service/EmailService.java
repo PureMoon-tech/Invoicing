@@ -6,32 +6,54 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Service
 public class EmailService {
+
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendWelcomeEmail(String toEmail, String userName) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject("Welcome to BillMitra!");
-        message.setText("Hi " + userName + ",\n\nWelcome to BillMitra! We're excited to have you on board." +
-                                             "\n\nBest Regards," +
-                                             "\nPureMoon-Tech");
-        mailSender.send(message);
+    private final ExecutorService emailExecutor =  Executors.newFixedThreadPool(5);
+
+    public CompletableFuture<Void> sendWelcomeEmail(String toEmail, String userName) {
+
+        return CompletableFuture.runAsync(() -> {
+            try {
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(toEmail);
+                message.setSubject("Welcome to BillMitra!");
+                message.setText("Hi " + userName + ",\n\nWelcome to BillMitra! We're excited to have you on board." +
+                        "\n\nBest Regards," +
+                        "\nPureMoon-Tech");
+                mailSender.send(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, emailExecutor);
+
     }
 
-    public void sendResetEmail(String email, String token) {
-        String resetUrl = "https://BillMitra.com/reset-password?token=" + token;
-        String subject = "Reset Your Password";
-        String body = "Click the link below to reset your password:\n" + resetUrl;
+    public CompletableFuture<Void> sendResetEmail(String email, String token) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject(subject);
-        message.setText(body);
+        return CompletableFuture.runAsync(() -> {
+            try {
+                String resetUrl = "https://BillMitra.com/reset-password?token=" + token;
+                String subject = "Reset Your Password";
+                String body = "Click the link below to reset your password:\n" + resetUrl;
 
-        mailSender.send(message);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(email);
+                message.setSubject(subject);
+                message.setText(body);
+                mailSender.send(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, emailExecutor);
+
     }
 }
 

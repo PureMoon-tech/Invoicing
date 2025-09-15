@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
@@ -23,7 +24,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class UserService {
+
 
     private final UserRepo User_repo;
     private final RoleRepository role_repo;
@@ -31,10 +34,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-
-
-
 
     @Autowired
     public UserService(UserRepo User_repo,RoleRepository role_repo, EmailService emailService)
@@ -52,7 +51,6 @@ public class UserService {
 
    /* public Optional<User> getUserById(int user_id)
     {
-
         return User_repo.findById(user_id);
     }
 
@@ -158,10 +156,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Verify the old password
-       /* if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Old password is incorrect");
-        }*/
-
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
         {
             throw new InvalidOldPasswordException("Old password is incorrect");

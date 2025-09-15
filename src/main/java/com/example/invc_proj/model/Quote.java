@@ -36,7 +36,7 @@ public class Quote {
     private BigDecimal total;
     private QuoteStatus status;
     @OneToMany(mappedBy = "quote_id", cascade = CascadeType.ALL)
-    @JsonIgnore
+    //@JsonIgnore
     private List<ServicesQuoted> quoteSrvcs;
 
 }

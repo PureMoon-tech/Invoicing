@@ -35,10 +35,5 @@ public class ServicesQuoted {
         private BigDecimal service_total;
         private Date last_update_date;
 
-
-   /* @ManyToOne
-    @JoinColumn(name = "invoice_id", insertable = false, updatable = false)
-    private Invoice invoice;*/
-
     }
 

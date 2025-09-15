@@ -6,6 +6,7 @@ import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.model.Enum.InvoiceType;
 import com.example.invc_proj.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,15 @@ public class InvoiceController {
         return ResponseEntity.status(200).body("Invoice Deleted Successfully");
     }
 
+    @GetMapping("/invoices")
+    public Page<Invoice> searchInvoices(
+            @RequestParam int clientId,
+            @RequestParam List<InvoiceStatus> statuses,
+            @RequestParam(required = false) Long invoiceId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+
+        return service.searchInvoices(clientId, statuses, invoiceId, page, size);
+    }
 
 }

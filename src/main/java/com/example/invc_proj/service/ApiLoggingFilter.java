@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Enumeration;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 10)
@@ -37,6 +39,9 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
 
     @Autowired
     private AudtiLogRepo auditLogRepository;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -85,55 +90,71 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
     private void logActivity(ContentCachingRequestWrapper request,
                              ContentCachingResponseWrapper response,
                              String endpoint) {
-        // Create activity log
-        ActivityLog activityLog = new ActivityLog();
-        activityLog.setEndpoint(endpoint);
-        activityLog.setInsertedOn(LocalDateTime.now());
 
-        // Capture request parameters
-        String requestParams = captureRequestParams(request);
-        activityLog.setRequestParams(requestParams);
+        taskExecutor.execute(() -> {
+            try {
+                // Create activity log
+                ActivityLog activityLog = new ActivityLog();
+                activityLog.setEndpoint(endpoint);
+                activityLog.setInsertedOn(LocalDateTime.now());
 
-        // Capture response body summary
-        String responseBody = captureResponseBody(response);
-        activityLog.setResponseSummary(responseBody);
+                // Capture request parameters
+                String requestParams = captureRequestParams(request);
+                activityLog.setRequestParams(requestParams);
 
-        // Save to database
-        activityLogRepository.save(activityLog);
+                // Capture response body summary
+                String responseBody = captureResponseBody(response);
+                activityLog.setResponseSummary(responseBody);
+
+                // Save to database
+                activityLogRepository.save(activityLog);
+            } catch (Exception e) {
+                logger.error("Error saving activity log", e);
+            }
+        });
+
     }
 
     private void logAudit(HttpServletRequest request, String endpoint) {
-        // Only create audit logs for authenticated users
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() &&
-                !(auth instanceof AnonymousAuthenticationToken)) {
 
-            String username = auth.getName();
-            String action = request.getMethod() + " " + endpoint;
+        taskExecutor.execute(() -> {
+            try {
+                // Only create audit logs for authenticated users
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (auth != null && auth.isAuthenticated() &&
+                        !(auth instanceof AnonymousAuthenticationToken)) {
 
-            AuditLog auditLog = new AuditLog();
-            auditLog.setUsername(username);
-            auditLog.setAction(action);
-            auditLog.setTimestamp(LocalDateTime.now());
+                    String username = auth.getName();
+                    String action = request.getMethod() + " " + endpoint;
 
-            // Save to database
-            auditLogRepository.save(auditLog);
-        }
+                    AuditLog auditLog = new AuditLog();
+                    auditLog.setUsername(username);
+                    auditLog.setAction(action);
+                    auditLog.setTimestamp(LocalDateTime.now());
+
+                    // Save to database
+                    auditLogRepository.save(auditLog);
+                }
+            } catch (Exception e) {
+                logger.error("Error saving audit log", e);
+            }
+        });
+
     }
 
     private String captureRequestParams(ContentCachingRequestWrapper request) {
         StringBuilder params = new StringBuilder();
 
-        // Add query parameters
+
         String queryString = request.getQueryString();
         if (queryString != null) {
             params.append("Query: ").append(queryString).append("; ");
         }
 
-        // Add HTTP method
+
         params.append("Method: ").append(request.getMethod()).append("; ");
 
-        // Add request body for POST, PUT, PATCH methods
+
         if (isContentTypeJson(request.getContentType()) &&
                 (request.getMethod().equals("POST") ||
                         request.getMethod().equals("PUT") ||
