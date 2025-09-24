@@ -1,5 +1,7 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.dto.InvoiceRequestDTO;
+import com.example.invc_proj.dto.InvoiceUpdateDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.Enum.InvoiceStatus;
 import com.example.invc_proj.model.Invoice;
@@ -31,11 +33,22 @@ public class InvoiceController {
                                @PathVariable BigDecimal p_amount_paid,
                                @RequestBody List<ServiceCostRequest> serviceCostRequest)
     {
-        System.out.println(p_client_Id);
-        System.out.println(serviceCostRequest);
         Invoice invoice = service.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,p_invoice_type,p_amount_paid,serviceCostRequest);
         return ResponseEntity.status(201).body(invoice);
     }
+
+    /*End point to generate invoice*/
+    @PostMapping("/generate-invoice")
+    public ResponseEntity<Invoice> generateInvoice (
+            @RequestBody InvoiceRequestDTO invoiceRequestDTO)
+    {
+        Invoice invoice = service.generateInvoice(invoiceRequestDTO.getClient_Id(),
+                invoiceRequestDTO.getBank_id(),invoiceRequestDTO.getInvoice_status(),
+                invoiceRequestDTO.getInvoice_type(),invoiceRequestDTO.getAmount_paid(),
+                invoiceRequestDTO.getServiceCostRequest());
+        return ResponseEntity.status(201).body(invoice);
+    }
+
 
     /*end point to update invoice status*/
     @PutMapping("/update-status/{p_invoice_id}/{p_invoice_status}/{p_amount_paid}")
@@ -43,10 +56,16 @@ public class InvoiceController {
                                        @PathVariable InvoiceStatus p_invoice_status,
                                        @PathVariable BigDecimal p_amount_paid)
     {
-        System.out.println(p_invoice_id);
-        System.out.println(p_invoice_status);
          Invoice invoice = service.updateInvoiceStatus(p_invoice_id,p_invoice_status,p_amount_paid);
           return ResponseEntity.ok(invoice);
+    }
+
+    /*end point to update invoice status*/
+    @PutMapping("/update-status")
+    public ResponseEntity<Invoice> updateInvoiceStatus(@RequestBody InvoiceUpdateDTO invoiceUpdateDTO)
+    {
+        Invoice invoice = service.updateInvoiceStatus(invoiceUpdateDTO.getP_invoice_id(),invoiceUpdateDTO.getP_invoice_status(),invoiceUpdateDTO.getP_amount_paid());
+        return ResponseEntity.ok(invoice);
     }
 
     @DeleteMapping("/delete-invoice/{p_invoice_id}")

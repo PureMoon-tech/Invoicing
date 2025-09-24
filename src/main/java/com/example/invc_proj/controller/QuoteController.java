@@ -1,5 +1,6 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.dto.QuoteRequestDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.Enum.QuoteStatus;
 import com.example.invc_proj.model.Enum.QuoteType;
@@ -40,6 +41,16 @@ public class QuoteController {
         Quote quote = service.generateQuote(p_client_Id,p_quote_status,p_quote_type,serviceCostRequest);
         return ResponseEntity.status(201).body(quote);
     }
+
+    @PostMapping("/generate-quote")
+    public ResponseEntity<Quote> generateInvoice (@RequestBody QuoteRequestDTO quoteRequestDTO)
+    {
+        Quote quote = service.generateQuote(quoteRequestDTO.getP_client_Id(),quoteRequestDTO.getP_quote_status(),
+                quoteRequestDTO.getP_quote_type(),
+                quoteRequestDTO.getServiceCostRequest());
+        return ResponseEntity.status(201).body(quote);
+    }
+
 
     @GetMapping("/quotes/{p_quote_status}")
     public ResponseEntity<List<Quote>> getAllQuotes(@PathVariable QuoteStatus p_quote_status)
