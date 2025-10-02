@@ -66,6 +66,19 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
+
+    @ExceptionHandler(RateLimiterException.class)
+    public ResponseEntity<ApiError> handleRateLimiterException(RateLimiterException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                "TOO_MANY_REQUESTS",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                             .header("Retry-After", "60")
+                             .body(apiError);
+    }
 }
 
     /*@ExceptionHandler(IllegalArgumentException.class)

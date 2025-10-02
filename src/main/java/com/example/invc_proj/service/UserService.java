@@ -69,7 +69,7 @@ public class UserService {
 
     public Optional<User> getUserByName(String UserName)
     {
-        return Optional.ofNullable(User_repo.findByUserName(UserName).orElseThrow(() -> new RuntimeException("User not found")));
+        return Optional.ofNullable(User_repo.findByUsername(UserName).orElseThrow(() -> new RuntimeException("User not found")));
 
     }
 
@@ -152,7 +152,7 @@ public class UserService {
     public ResponseEntity<String> updatePassword(PasswordUpdateRequestDTO request, Principal principal){
         //User user = User_repo.findByUserName(principal.getName());
 
-        User user = User_repo.findByUserName(principal.getName())
+        User user = User_repo.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Verify the old password

@@ -18,8 +18,11 @@ public interface UserRepo extends JpaRepository<User, Integer>
 
 
     //System.out.println("User Not Found "+USERS);
-        @Query(value = "SELECT * FROM users WHERE user_name = :username", nativeQuery = true)
-        Optional<User> findByUserName(String username);
+//        @Query(value = "SELECT * FROM users WHERE user_name = :username", nativeQuery = true)
+//        Optional<User> findByUserName(String username);
+
+    @Query(value = "SELECT * FROM users WHERE user_name = :username", nativeQuery = true)
+    Optional<User> findByUsername(@Param("username") String username);
 
 
 
@@ -28,5 +31,5 @@ public interface UserRepo extends JpaRepository<User, Integer>
 
     boolean existsByEmailId(String emailId);
 
-    Optional<User> findByUsername(String system);
+    //Optional<User> findByUsername(String system);
 }
