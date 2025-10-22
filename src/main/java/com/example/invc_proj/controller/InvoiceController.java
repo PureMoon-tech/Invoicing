@@ -40,6 +40,7 @@ public class InvoiceController {
     /*End point to generate invoice*/
     @PostMapping("/generate-invoice")
     public ResponseEntity<Invoice> generateInvoice (
+            @RequestHeader
             @RequestBody InvoiceRequestDTO invoiceRequestDTO)
     {
         Invoice invoice = service.generateInvoice(invoiceRequestDTO.getClient_Id(),

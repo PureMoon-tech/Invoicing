@@ -64,7 +64,6 @@ public class QuoteController {
     @GetMapping("/quotes/pdf")
     public ResponseEntity<byte[]> downloadPdf(@RequestBody Quote quote) {
         try {
-            // ✅ Fast async PDF generation with timeout
             byte[] pdf = pdfHandlerService.getQuotePdfAsync(quote)
                     .get(5, TimeUnit.SECONDS);
 

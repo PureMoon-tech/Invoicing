@@ -149,6 +149,22 @@
                 <artifactId>jedis</artifactId>
                 <version>5.2.0</version> <!-- Use the latest version -->
             </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.23.4</version>
+            </dependency>
+          <!--QR CODE-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
+        </dependency>
 	</dependencies>
 	<repositories>
 		<repository>

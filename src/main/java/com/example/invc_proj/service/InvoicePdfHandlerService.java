@@ -19,23 +19,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class InvoicePdfHandlerService {
 
-    @Autowired
     private final InvoiceRepo invoiceRepo;
 
-    @Autowired
     private final ServicesRequestedRepo servicesRequestedRepo;
 
-    @Autowired
     private final InvoicePdfService invoicePdfService;
 
-    @Autowired
-    private ClientRepo clientRepository;
+    private final ClientRepo clientRepository;
 
-    @Autowired
-    private BankRepo bankRepository;
+    private final BankRepo bankRepository;
 
-    @Autowired
-    private ServicesRepo servicesRespository;
+    private final ServicesRepo servicesRespository;
 
     public byte[] getInvoicePdf(Invoice invoice) {
         List<ServicesRequested> services = servicesRequestedRepo.findByInvoiceId(invoice.getInvoice_id());
