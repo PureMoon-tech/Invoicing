@@ -2,10 +2,14 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.AuthRequest;
 import com.example.invc_proj.dto.AuthResponse;
+import com.example.invc_proj.dto.RefreshRequest;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
+import com.example.invc_proj.exceptions.InvalidRefreshTokenException;
 import com.example.invc_proj.model.AuditLog;
 import com.example.invc_proj.repository.AudtiLogRepo;
+import com.example.invc_proj.security.CustomUserDetailsService;
 import com.example.invc_proj.security.JwtUtil;
+import com.example.invc_proj.security.RefreshTokenService;
 import com.example.invc_proj.service.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,10 @@ import java.util.List;
 
     @Autowired
     private AudtiLogRepo audtiLogRepo;
+
+    private final RefreshTokenService refreshTokenService;
+
+    private final CustomUserDetailsService CustomUserDetailsService;
 
     //@Autowired
    // private LicenseManager licenseManager;
@@ -104,7 +112,8 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 */
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest request)
+    {
         System.out.println(request);
 
 
@@ -123,18 +132,20 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     )
             );
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
+            System.out.println(userDetails);
             List<String> roles = userDetails.getAuthorities()
                     .stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
             String token = jwtUtil.generateToken(request.getUsername(), roles);
-
+            System.out.println(token);
+            String refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
+            System.out.println(refreshToken);
             // Step 2: Increment active user count after successful authentication
             // licenseManager.incrementActiveUsers();
 
-            return ResponseEntity.ok(new AuthResponse(token));
+            return ResponseEntity.ok(new AuthResponse(token,refreshToken));
         }
         catch (BadCredentialsException ex)
         {
@@ -237,6 +248,31 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         resetService.resetPassword(token, newPassword);
         return ResponseEntity.ok("Password has been reset successfully");
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest req)
+    {
+        String username = refreshTokenService.validateAndGetUsername(req.getRefreshToken())
+                .orElseThrow(() -> new InvalidRefreshTokenException("Invalid/expired refresh token"));
+        System.out.println("username"+username);
+        UserDetails user = CustomUserDetailsService.loadUserByUsername(username);
+        String newAccessToken = jwtUtil.generateToken(username,
+                user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()));
+        System.out.println("newAccessToken"+newAccessToken);
+        System.out.println("req.getRefreshToken()"+req.getRefreshToken());
+        String newRefreshToken = refreshTokenService.rotateRefreshToken(req.getRefreshToken(), username);
+        System.out.println("newRefreshToken"+newRefreshToken);
+        return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken));
+    }
+
+   /* @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody RefreshRequest req) {
+        refreshTokenService.revokeToken(req.getRefreshToken());
+        return ResponseEntity.ok("Logged out");
+    }
+*/
 
 }
 

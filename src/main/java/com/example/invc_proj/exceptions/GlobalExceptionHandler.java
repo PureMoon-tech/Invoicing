@@ -79,6 +79,32 @@ public class GlobalExceptionHandler {
                              .header("Retry-After", "60")
                              .body(apiError);
     }
+
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidRefreshTokenException(RateLimiterException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                HttpStatus.UNAUTHORIZED.value(),
+                "UNAUTHORIZED",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(apiError);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFoundException(RateLimiterException ex, HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                HttpStatus.NOT_FOUND.value(),
+                "NOT_FOUND",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(apiError);
+    }
+
 }
 
     /*@ExceptionHandler(IllegalArgumentException.class)

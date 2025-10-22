@@ -64,8 +64,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder2() {
-        return new BCryptPasswordEncoder();
-    }
+    //@Bean
+    //public BCryptPasswordEncoder passwordEncoder2() {return new BCryptPasswordEncoder(); }
 }

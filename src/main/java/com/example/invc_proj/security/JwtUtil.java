@@ -3,8 +3,11 @@ package com.example.invc_proj.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.security.Key;
 import java.util.Date;
@@ -18,6 +21,9 @@ public class JwtUtil {
 
     @Value("${jwt.expiration.access:900000}") // 15 minutes
     private long ACCESS_TOKEN_EXPIRATION;
+
+    @Value("${jwt.expiration.refresh:86400000}") // 15 minutes
+    private long REFRESH_TOKEN_EXPIRATION;
 
     //private Key getSigningKey() {return Keys.hmacShaKeyFor(SECRET.getBytes());}
     // Helper method to get the signing key from the secret string
@@ -46,7 +52,14 @@ public class JwtUtil {
                 .compact();
     }
 
-
+    public String generateRefreshToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     /**
      * Extracts the username (subject) from a JWT.
@@ -170,6 +183,32 @@ public class JwtUtil {
             extractClaims(token);
             return true;
         } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Key key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (ExpiredJwtException e) {
+            System.out.println("JWT token is expired: " + e.getMessage());
+            return false;
+        } catch (SignatureException e) {
+            System.out.println("Invalid JWT signature: " + e.getMessage());
+            return false;
+        } catch (MalformedJwtException e) {
+            System.out.println("Invalid JWT token: " + e.getMessage());
+            return false;
+        } catch (UnsupportedJwtException e) {
+            System.out.println("JWT token is unsupported: " + e.getMessage());
+            return false;
+        } catch (IllegalArgumentException e) {
+            System.out.println("JWT claims string is empty: " + e.getMessage());
             return false;
         }
     }
