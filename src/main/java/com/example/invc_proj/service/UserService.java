@@ -73,7 +73,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<String> addUser(UserDTO user)
+    public String addUser(UserDTO user)
     {
         User NewUser = new User();
         NewUser.setUsername(user.getUsername());
@@ -107,7 +107,7 @@ public class UserService {
         System.out.println(NewUser);
         emailService.sendWelcomeEmail(NewUser.getEmailId(),NewUser.getUsername());
 
-        return ResponseEntity.ok("User added successfully");
+        return "User added successfully";
     }
 
     @Autowired
@@ -149,7 +149,7 @@ public class UserService {
     }
 
 
-    public ResponseEntity<String> updatePassword(PasswordUpdateRequestDTO request, Principal principal){
+    public String updatePassword(PasswordUpdateRequestDTO request, Principal principal){
         //User user = User_repo.findByUserName(principal.getName());
 
         User user = User_repo.findByUsername(principal.getName())
@@ -174,7 +174,7 @@ public class UserService {
         // Hash the new password before saving
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         User_repo.save(user);
-        return ResponseEntity.status(201).body("Password updated successfully");
+        return "Password updated successfully";
     }
 
 }

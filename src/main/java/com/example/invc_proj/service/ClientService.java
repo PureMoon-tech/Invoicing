@@ -2,10 +2,16 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.ClientDTO;
 import com.example.invc_proj.dto.ClientDropdownDTO;
+import com.example.invc_proj.exceptions.NotFoundException;
 import com.example.invc_proj.mapper.ClientDTOMapper;
 import com.example.invc_proj.model.Client;
+import com.example.invc_proj.model.Enum.InvoiceStatus;
+import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.repository.ClientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -89,19 +95,28 @@ public class ClientService {
 
     }
 
+    public Page<ClientDropdownDTO> SearchClient(String clientName,
+                                                int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return clientRepo.findByClientByName(clientName, pageable);
+    }
+
+
     // Get full client details by ID
-    public Optional<Client> getClientById(int clientId) {
+    public Client getClientById(int clientId) {
 
         //return clientRepo.findById(clientId);
-        return Optional.ofNullable(clientRepo.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found")));
+
+        Client client = clientRepo.findById(clientId)
+                .orElseThrow(() -> new NotFoundException("Client not found"));
+        return client;
     }
 
     // Get full client details by ID
     public ClientDTO getClientDTOById(int clientId) {
         return clientRepo.findById(clientId)
                 .map(ClientDTOMapper::mapToClientDTO)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new NotFoundException("Client not found"));
     }
 
     public void removeClient(int pClientId)

@@ -1,5 +1,7 @@
 package com.example.invc_proj.controller;
 
+import com.example.invc_proj.exceptions.ApiResponse;
+import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.model.ServicesRequested;
 import com.example.invc_proj.service.ProductService;
@@ -17,41 +19,42 @@ public class InvcController {
 
 
     @GetMapping("/servicesRequested")
-    public ResponseEntity<List<ServicesRequested>> getAllServicesRequested()
+    public ResponseEntity<ApiResponse<List<ServicesRequested>>> getAllServicesRequested()
     {
         List<ServicesRequested> servicesRequested =  service.getAllServicesRequested();
-        return  ResponseEntity.ok().body(servicesRequested);
+        return  ApiResponses.ok(servicesRequested);
     }
 
     @GetMapping("/servicesRequested/{invoice_id}")
-    public ResponseEntity<List<ServicesRequested>> getAllServicesRequested(@PathVariable Long invoice_id)
+    public ResponseEntity<ApiResponse<List<ServicesRequested>>> getAllServicesRequested(@PathVariable Long invoice_id)
     {
-        System.out.println("calling getServicesRequestedByInvoice");
+        //System.out.println("calling getServicesRequestedByInvoice");
         List<ServicesRequested> servicesRequested =   service.getServicesRequestedByInvoice(invoice_id);
-        return ResponseEntity.ok().body(servicesRequested);
+        return ApiResponses.ok(servicesRequested);
     }
 
 
     @PostMapping("/servicesRequested")
-    public ResponseEntity<String> addServiceTOInvoice(@RequestBody ServicesRequested invc_srvc)
+    public ResponseEntity<ApiResponse<String>> addServiceTOInvoice(@RequestBody ServicesRequested invc_srvc)
     {
         service.addServiceTOInvoice(invc_srvc);
-        return  ResponseEntity.status(201).body("Service added successfully");
+        return  ApiResponses.created("Service added successfully");
     }
 
 
     @GetMapping("/invoices")
-    public ResponseEntity<List<Invoice>> getAllInvoices()
+    public ResponseEntity<ApiResponse<List<Invoice>>> getAllInvoices()
     {
 
         List<Invoice> invoices = service.getAllInvoices();
-        return ResponseEntity.ok().body(invoices);
+        return ApiResponses.ok(invoices);
     }
 
     @PostMapping("/invoices")
-    public void createInvoice(@RequestBody Invoice invc)
+    public ResponseEntity<ApiResponse<String>> createInvoice(@RequestBody Invoice invc)
     {
         service.CreateInvoice(invc);
+        return  ApiResponses.created("Invoice created successfully");
     }
 
 

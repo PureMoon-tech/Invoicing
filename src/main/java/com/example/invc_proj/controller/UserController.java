@@ -2,6 +2,8 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.exceptions.ApiResponse;
+import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.userLogin;
 import com.example.invc_proj.model.User;
 import com.example.invc_proj.service.UserService;
@@ -23,38 +25,38 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/users")
-    public List<User> getUsers() {
-       return service.getUsers();
+    public ResponseEntity<ApiResponse<List<User>>> getUsers() {
+       return ApiResponses.ok(service.getUsers());
    }
 
     @GetMapping("/users/{UserId}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable int UserId)
+    public ResponseEntity<ApiResponse<Optional<User>>> getUserById(@PathVariable int UserId)
     {
         Optional<User> users = service.getUserById(UserId);
-        return ResponseEntity.ok(users);
+        return ApiResponses.ok(users);
     }
 
     @GetMapping("/user-name/{UserName}")
-    public ResponseEntity<Optional<User>> getUserByName(@PathVariable String UserName)
+    public ResponseEntity<ApiResponse<Optional<User>>> getUserByName(@PathVariable String UserName)
     {
         Optional<User> users = service.getUserByName(UserName);
-        return ResponseEntity.ok(users);
+        return ApiResponses.ok(users);
     }
 
     @PostMapping("/users")
-    public ResponseEntity<String> addUser(@RequestBody UserDTO user)
+    public ResponseEntity<ApiResponse<String>> addUser(@RequestBody UserDTO user)
     {
         System.out.println("calling add user"+user);
-        return service.addUser(user);
+        return ApiResponses.created(service.addUser(user));
         //return ResponseEntity.status(201).body("user added successfully");
     }
 
     @PutMapping("/users")
-    public ResponseEntity<String> alterUser(@RequestBody User user)
+    public ResponseEntity<ApiResponse<String>> alterUser(@RequestBody User user)
     {
         System.out.println("calling add user"+user);
         service.alterUser(user);
-        return ResponseEntity.status(201).body("user altered successfully");
+        return ApiResponses.ok("user altered successfully");
     }
 
    /* @PutMapping("/user")
@@ -65,9 +67,9 @@ public class UserController {
         return ResponseEntity.status(201).body("user altered successfully");
     }*/
     @PutMapping("/update-password")
-    public ResponseEntity<String> updatePassword(@RequestBody PasswordUpdateRequestDTO request, Principal principal)
+    public ResponseEntity<ApiResponse<String>> updatePassword(@RequestBody PasswordUpdateRequestDTO request, Principal principal)
     {
-        return service.updatePassword(request,principal);
+        return ApiResponses.ok(service.updatePassword(request,principal));
     }
 
 }

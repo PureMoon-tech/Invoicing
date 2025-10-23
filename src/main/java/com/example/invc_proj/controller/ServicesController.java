@@ -2,6 +2,8 @@ package com.example.invc_proj.controller;
 
 
 import com.example.invc_proj.dto.ServicesDTO;
+import com.example.invc_proj.exceptions.ApiResponse;
+import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.service.Process_Invoice;
 import com.example.invc_proj.service.ProductService;
@@ -24,42 +26,42 @@ public class ServicesController
     private ProductService service;
 
         @GetMapping("/services")
-            public ResponseEntity<List<Services>> getAllServices()
+            public ResponseEntity<ApiResponse<List<Services>>> getAllServices()
             {
 
                 List<Services> services = service.getAllServices();
-                return ResponseEntity.ok(services);
+                return ApiResponses.ok(services);
             }
 
         @GetMapping("/services/{id}")
-            public ResponseEntity<Optional<Services>> getServiceById(@PathVariable int id)
+            public ResponseEntity<ApiResponse<Optional<Services>>> getServiceById(@PathVariable int id)
             {
                 Optional<Services> services = service.getServiceById(id);
-                return ResponseEntity.ok(services);
+                return ApiResponses.ok(services);
             }
 
         @PostMapping("/services")
         @PreAuthorize("hasRole('ADMIN')")
-            public ResponseEntity<String> addServices(@RequestBody ServicesDTO srvc)
+            public ResponseEntity<ApiResponse<String>> addServices(@RequestBody ServicesDTO srvc)
             {
                 service.addServices(srvc);
-                return ResponseEntity.status(201).body("Service added successfully");
+                return ApiResponses.created("Service added successfully");
             }
 
         @PutMapping("/services/{p_service_id}")
         @PreAuthorize("hasRole('ADMIN')")
-             public ResponseEntity<String> updateServiceStatus(@PathVariable int p_service_id)
+             public ResponseEntity<ApiResponse<String>> updateServiceStatus(@PathVariable int p_service_id)
             {
                service.updateServiceStatus(p_service_id);
-               return ResponseEntity.status(200).body("Service status updated successfully");
+               return ApiResponses.ok("Service status updated successfully");
             }
 
         @DeleteMapping("/services/{p_service_id}")
         @PreAuthorize("hasRole('ADMIN')")
-            public ResponseEntity<String> deleteService(@PathVariable int p_service_id)
+            public ResponseEntity<ApiResponse<String>> deleteService(@PathVariable int p_service_id)
            {
              service.deleteService(p_service_id);
-             return ResponseEntity.status(200).body("service deleted successfully");
+             return ApiResponses.ok("service deleted successfully");
            }
 
 }

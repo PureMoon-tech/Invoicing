@@ -2,6 +2,7 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.BankDetailsDTO;
 import com.example.invc_proj.dto.BankDropdownDTO;
+import com.example.invc_proj.exceptions.NotFoundException;
 import com.example.invc_proj.mapper.BankDetailsDTOMapper;
 import com.example.invc_proj.model.BankDetails;
 import com.example.invc_proj.repository.BankRepo;
@@ -33,31 +34,53 @@ public class BankService {
          return  bankDTOList;
     }
 
-    public Optional<BankDetails> getBankDetailsById(int id)
+    public BankDetails getBankDetailsById(int id)
     {
-        System.out.println("get by id"+id);
-        return repository_bnk.findById(id);
+        //System.out.println("get by id"+id);
+        try{
+            return repository_bnk.findById(id).orElseThrow(() -> new NotFoundException("Bank with ID " + id + " not found."));
+        }
+        catch (Exception e)
+        {
+            throw new NotFoundException("Bank with ID " + id + " not found.");
+        }
+
     }
 
     public List<BankDropdownDTO> getBankDropdown()
     {
+
         return repository_bnk.findBanksForDropdown();
     }
 
     public List<BankDropdownDTO> getBankDropdownById(int id)
     {
-        return repository_bnk.findBanksForDropdown();
+        try
+        {
+            return repository_bnk.findBanksForDropdownById(id);
+        }
+        catch (Exception e)
+        {
+            throw new NotFoundException("Bank with ID " + id + " not found.");
+        }
+
     }
 
 
     public void addBankDetails(BankDetailsDTO bnk)
     {
         BankDetails Bank = BankDetailsDTOMapper.toEntity(bnk);
-        repository_bnk.save(Bank);
+        try {
+            repository_bnk.save(Bank);
+        } catch (Exception e) {
+            throw new RuntimeException("Error saving bank details: " /*+ e.getMessage()*/, e);
+        }
     }
 
     public void deleteBankDetails(int pBankId)
     {
+      BankDetails bankToDelete = repository_bnk.findById(pBankId)
+              .orElseThrow(() -> new NotFoundException("Bank with ID " + pBankId + " not found."));
       repository_bnk.deleteById(pBankId);
     }
 }

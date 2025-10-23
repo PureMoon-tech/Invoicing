@@ -30,7 +30,7 @@ public class ReceiptService {
     @Autowired
     private UserRepo userRepository;
 
-    // 🔁 Used for scheduled or reconciliation-driven receipt generation
+    //  Used for scheduled or reconciliation-driven receipt generation
     public void generateAndSave(Invoice invoice, BigDecimal paymentAmount) {
         Receipt receipt = new Receipt();
 
@@ -47,7 +47,7 @@ public class ReceiptService {
         receiptRepository.save(receipt);
     }
 
-    // 🔁 Used for manual receipt creation
+    // Used for manual receipt creation
     public ReceiptResponseDTO addReceipt(ReceiptRequestDTO request) {
         Receipt receipt = new Receipt();
 

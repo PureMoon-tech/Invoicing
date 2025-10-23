@@ -2,10 +2,13 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.BankDetailsDTO;
 import com.example.invc_proj.dto.BankDropdownDTO;
+import com.example.invc_proj.exceptions.ApiResponse;
+import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.BankDetails;
 import com.example.invc_proj.model.BankDetailsDropDown;
 import com.example.invc_proj.service.BankService;
 import com.example.invc_proj.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,18 +29,18 @@ public class BankController
     private BankService service;
 
     @GetMapping("/bankdetails")
-    public ResponseEntity<List<BankDetailsDTO>> getAllBankDetails()
+    public ResponseEntity<ApiResponse<List<BankDetailsDTO>>> getAllBankDetails()
     {
         List<BankDetailsDTO> bankDetails = service.getAllBankDetails();
-        return ResponseEntity.ok(bankDetails);
+        return ApiResponses.ok(bankDetails);
     }
 
 
     @GetMapping("/bankdetailsdropdown")
-    public ResponseEntity<List<BankDropdownDTO>> getAllBankDetailsDD()
+    public ResponseEntity<ApiResponse<List<BankDropdownDTO>>> getAllBankDetailsDD()
     {
         List<BankDropdownDTO> dbdto = service.getBankDropdown();
-        return ResponseEntity.ok(dbdto);
+        return ApiResponses.ok(dbdto);
     }
        /* List<BankDetails> bankDetailsList= service.getAllBankDetails();; // Retrieve data from your database
         List<BankDropdownDTO> BankDetailsDD = new ArrayList<>();
@@ -54,17 +57,13 @@ public class BankController
 
         return BankDetailsDD;
        */
-
-
-
-
+    
     @GetMapping("/bankdetails/{id}")
-    public ResponseEntity<Optional<BankDetails>> getBankDetailsById(@PathVariable int id)
+    public ResponseEntity<ApiResponse<BankDetails>> getBankDetailsById(@PathVariable int id)
     {
-        System.out.println("calling getBankDetailsById");
-
-        Optional<BankDetails> bankDetails = service.getBankDetailsById(id);
-        return ResponseEntity.ok(bankDetails);
+        //System.out.println("calling getBankDetailsById");
+        BankDetails bankDetails = service.getBankDetailsById(id);
+        return ApiResponses.ok(bankDetails);
     }
 
 
@@ -72,30 +71,23 @@ public class BankController
 
     @PostMapping("/bankdetails")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addBankDetails(@RequestBody BankDetailsDTO bnk)
+    public ResponseEntity<ApiResponse<String>> addBankDetails(@RequestBody BankDetailsDTO bnk)
     {
-        try {
             //logger.info("Received request to add bank details: {}", bnk);
             service.addBankDetails(bnk);  // Call the service to add bank details
-            return ResponseEntity.status(HttpStatus.CREATED).body("Bank details added successfully.");
-        } catch (Exception e) {
-            //logger.error("Error while adding bank details", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add bank details.");
-        }
+            //return ResponseEntity.status(HttpStatus.CREATED).body("Bank details added successfully.");
+              return ApiResponses.created("Bank details added successfully.");
     }
 
     @DeleteMapping("/bankdetails/{p_bank_id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteBankDetails(@PathVariable int p_bank_id)
+    public ResponseEntity<ApiResponse<String>> deleteBankDetails(@PathVariable int p_bank_id)
     {
-        try {
+
             service.deleteBankDetails(p_bank_id);
-            return ResponseEntity.status(HttpStatus.OK).body("Bank Details Removed");
-        }
-        catch(Exception e)
-        {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete bank details");
-        }
+            //return ResponseEntity.status(HttpStatus.OK).body("Bank Details Removed");
+              return ApiResponses.ok("Bank Details Removed");
+
     }
 }
 
