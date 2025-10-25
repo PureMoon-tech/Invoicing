@@ -9,9 +9,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.task.TaskExecutor;
@@ -30,18 +30,15 @@ import java.util.Enumeration;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
+@RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 10)
 public class ApiLoggingFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(ApiLoggingFilter.class);
 
-    @Autowired
-    private ActvityLogRepo activityLogRepository;
 
-    @Autowired
-    private AudtiLogRepo auditLogRepository;
-
-    @Autowired
-    private TaskExecutor taskExecutor;
+    private final ActvityLogRepo activityLogRepository;
+    private final AudtiLogRepo auditLogRepository;
+    private final TaskExecutor taskExecutor;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

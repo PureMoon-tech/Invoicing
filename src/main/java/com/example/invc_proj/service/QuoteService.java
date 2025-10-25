@@ -1,11 +1,12 @@
 package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.ServiceCostRequest;
+import com.example.invc_proj.exceptions.NotFoundException;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.model.Enum.QuoteStatus;
 import com.example.invc_proj.model.Enum.QuoteType;
 import com.example.invc_proj.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,27 +20,16 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class QuoteService {
 
-    @Autowired
-    private ClientRepo clientRepository;
 
-    @Autowired
-    private ServicesRepo serviceRepository;
-
-    @Autowired
-    private QuoteRepo quoteRepository;
-
-    @Autowired
-    private ServicesQuotedRepo servicesQuotedRepository;
-
-    @Autowired
-    private UserService userService; // Assuming this service provides user info by username
-
-    @Autowired
-    private QuoteNumGeneratorService quoteNumGeneratorService;
-
-
+    private final ClientRepo clientRepository;
+    private final ServicesRepo serviceRepository;
+    private final QuoteRepo quoteRepository;
+    private final ServicesQuotedRepo servicesQuotedRepository;
+    private final UserService userService;
+    private final QuoteNumGeneratorService quoteNumGeneratorService;
 
 
     public Quote generateQuote(int clientId,QuoteStatus quoteStatus, QuoteType quoteType, List<ServiceCostRequest> serviceCosts) {
@@ -52,7 +42,7 @@ public class QuoteService {
         int userId = user.get().getId();
 
         Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client not found"));
+                .orElseThrow(() -> new NotFoundException("Client not found"));
 
         BigDecimal totalAmount = BigDecimal.ZERO;
 
@@ -60,7 +50,7 @@ public class QuoteService {
 
         for (ServiceCostRequest serviceCostRequest : serviceCosts) {
             Services service = serviceRepository.findById(serviceCostRequest.getServiceId())
-                    .orElseThrow(() -> new RuntimeException("Service not found"));
+                    .orElseThrow(() -> new NotFoundException("Service not found"));
 
             ServicesQuoted servicesQuoted = new ServicesQuoted();
 
@@ -155,7 +145,7 @@ public class QuoteService {
 
     public List<Quote> getAllQuotes(QuoteStatus quote_status)
     {
-    // Fetch all quotes from the repository
+        // Fetch all quotes from the repository
         // Filter out only the active quotes
         // If no active quotes are found, throw an exception
         // Otherwise, return the list of active quotes
@@ -167,7 +157,7 @@ public class QuoteService {
 
      if(quotes.isEmpty())
      {
-         throw new RuntimeException("No Quotes Found");
+         throw new NotFoundException("No Quotes Found");
      }
      else return quotes;
     }

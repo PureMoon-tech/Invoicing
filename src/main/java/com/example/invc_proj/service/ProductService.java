@@ -56,7 +56,6 @@ public class ProductService {
   }
 
 
-    public  List<Invoice> getAllInvoices() { return repository_invc.findAll(); }
 
     public  List<ServicesRequested> getAllServicesRequested()
             { return repository_invc_srvc.findAll(); }

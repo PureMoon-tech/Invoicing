@@ -1,18 +1,21 @@
 package com.example.invc_proj.service;
 
+import com.example.invc_proj.dto.InvoiceResponseDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
+import com.example.invc_proj.mapper.InvoiceResponseDTOMapper;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.model.Enum.InvoiceStatus;
 import com.example.invc_proj.model.Enum.InvoiceType;
-import com.example.invc_proj.repository.ClientRepo;
-import com.example.invc_proj.repository.InvoiceRepo;
-import com.example.invc_proj.repository.ServicesRepo;
-import com.example.invc_proj.repository.ServicesRequestedRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.invc_proj.repository.*;
+import com.example.invc_proj.service.Event.InvoiceGeneratedEvent;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,42 +28,30 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class InvoiceService {
 
-    @Autowired
-    private ClientRepo clientRepository;
-
-    @Autowired
-    private ServicesRepo serviceRepository;
-
-    @Autowired
-    private InvoiceRepo invoiceRepository;
-
-    @Autowired
-    private ServicesRequestedRepo servicesRequestedRepository;
-    @Autowired
-    private UserService userService; // Assuming this service provides user info by username
-    @Autowired
-    private InvoiceNumGeneratorService invoiceNumGeneratorService;
-
+    private final ClientRepo clientRepository;
+    private final ServicesRepo serviceRepository;
+    private final InvoiceRepo invoiceRepository;
+    private final ServicesRequestedRepo servicesRequestedRepository;
+    private final UserService userService;
+    private final InvoiceNumGeneratorService invoiceNumGeneratorService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public Invoice generateInvoice(int clientId, int bankId , InvoiceStatus invoiceStatus, InvoiceType invoiceType,BigDecimal amountPaid, List<ServiceCostRequest> serviceCosts) {
 
-        // Get the currently authenticated user's username
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userPrincipal.getUsername();
-
-        // Fetch the user object by username
+        System.out.println(username);
         Optional<User> user = userService.getUserByName(username);
         int userId = user.get().getId();
         //int total = serviceCosts.getFirst().getTotalCost();
 
-        // Find the client by clientId
         Client client = clientRepository.findById(clientId)
                                         .orElseThrow(() -> new RuntimeException("Client not found"));
 
-        // Initialize total amount and tax calculations
         BigDecimal totalAmount = BigDecimal.ZERO;
 
         List<ServicesRequested> servicesRequestedList = new ArrayList<>();
@@ -113,13 +104,17 @@ public class InvoiceService {
 
         System.out.print(savedInvoice);
 
-        // Now that the invoice is saved, update the ServicesRequested list with the correct invoiceId
+        // Now that the invoice is saved, updating the ServicesRequested list with the correct invoiceId
         //servicesRequestedList.forEach(serviceRequest -> serviceRequest.setInvoice_id(savedInvoice.getInvoice_id()));
         for (ServicesRequested serviceRequest : servicesRequestedList) {
             serviceRequest.setInvoice_id(savedInvoice); // Using the Invoice object directly
         }
         // Save all the services requested for this invoice
         servicesRequestedRepository.saveAll(servicesRequestedList);
+        invoiceRepository.flush();
+        //receipt generation event publishing
+        eventPublisher.publishEvent(new InvoiceGeneratedEvent(savedInvoice,amountPaid));
+
         return savedInvoice;
     }
 
@@ -273,6 +268,13 @@ public class InvoiceService {
         }
         return status;
     }
+
+    public  List<InvoiceResponseDTO> getAllInvoices()
+    {
+        List<InvoiceResponseDTO> invoiceResponseDTO = InvoiceResponseDTOMapper.toDTOList(invoiceRepository.findAll());
+        return invoiceResponseDTO;
+    }
+
 
     public Page<Invoice> searchInvoices(int clientId,
                                         List<InvoiceStatus> statuses,

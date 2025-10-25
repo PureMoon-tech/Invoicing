@@ -24,14 +24,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class InvoicePdfService {
 
-    @Autowired
-    private ClientRepo clientRepository;
-
-    @Autowired
-    private BankRepo bankRepository;
-
-    @Autowired
-    private ServicesRepo servicesRespository;
+    private final ClientRepo clientRepository;
+    private final BankRepo bankRepository;
+    private final ServicesRepo servicesRepository;
 
     public byte[] generateInvoicePdf(Invoice invoice, List<ServicesRequested> services) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -73,7 +68,7 @@ public class InvoicePdfService {
                     .map(ServicesRequested::getService_id)
                     .collect(Collectors.toList());
 
-            Map<Integer, Services> serviceMap = servicesRespository.findAllById(serviceIds)
+            Map<Integer, Services> serviceMap = servicesRepository.findAllById(serviceIds)
                     .stream()
                     .collect(Collectors.toMap(Services::getService_id, s -> s));
 

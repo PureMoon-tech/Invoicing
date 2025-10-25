@@ -4,11 +4,13 @@ package com.example.invc_proj;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 //import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 //@EnableDiscoveryClient
 @EnableJpaRepositories(basePackages = "com.example.invc_proj.repository")
+@EnableAsync
 public class InvcProjApplication {
 
 	public static void main(String[] args)
@@ -18,5 +20,5 @@ public class InvcProjApplication {
 		app.setAdditionalProfiles("default");
 		app.run(args);*/
 	}
-
+ 
 }

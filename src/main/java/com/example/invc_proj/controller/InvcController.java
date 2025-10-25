@@ -42,14 +42,6 @@ public class InvcController {
     }
 
 
-    @GetMapping("/invoices")
-    public ResponseEntity<ApiResponse<List<Invoice>>> getAllInvoices()
-    {
-
-        List<Invoice> invoices = service.getAllInvoices();
-        return ApiResponses.ok(invoices);
-    }
-
     @PostMapping("/invoices")
     public ResponseEntity<ApiResponse<String>> createInvoice(@RequestBody Invoice invc)
     {

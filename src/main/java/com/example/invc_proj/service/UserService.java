@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
+//@Transactional
 public class UserService {
 
 
@@ -61,14 +61,13 @@ public class UserService {
 
     public Optional<User> getUserById(int user_id)
     {
-
         return Optional.ofNullable(User_repo.findById(user_id).
                 orElseThrow(() -> new RuntimeException("User not found")));
-
     }
 
     public Optional<User> getUserByName(String UserName)
     {
+        System.out.println("UserName: "+UserName);
         return Optional.ofNullable(User_repo.findByUsername(UserName).orElseThrow(() -> new RuntimeException("User not found")));
 
     }

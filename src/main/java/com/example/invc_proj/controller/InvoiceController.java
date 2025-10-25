@@ -1,10 +1,14 @@
 package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.InvoiceRequestDTO;
+import com.example.invc_proj.dto.InvoiceResponseDTO;
 import com.example.invc_proj.dto.InvoiceUpdateDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.exceptions.ApiResponse;
 import com.example.invc_proj.exceptions.ApiResponses;
+import com.example.invc_proj.mapper.BankDetailsDTOMapper;
+import com.example.invc_proj.mapper.InvoiceResponseDTOMapper;
+import com.example.invc_proj.model.BankDetails;
 import com.example.invc_proj.model.Enum.InvoiceStatus;
 import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.model.Enum.InvoiceType;
@@ -45,6 +49,7 @@ public class InvoiceController {
             @RequestHeader
             @RequestBody InvoiceRequestDTO invoiceRequestDTO)
     {
+        System.out.println(invoiceRequestDTO);
         Invoice invoice = service.generateInvoice(invoiceRequestDTO.getClient_Id(),
                 invoiceRequestDTO.getBank_id(),invoiceRequestDTO.getInvoice_status(),
                 invoiceRequestDTO.getInvoice_type(),invoiceRequestDTO.getAmount_paid(),
@@ -65,10 +70,11 @@ public class InvoiceController {
 
     /*end point to update invoice status*/
     @PutMapping("/update-status")
-    public ResponseEntity<ApiResponse<Invoice>> updateInvoiceStatus(@RequestBody InvoiceUpdateDTO invoiceUpdateDTO)
+    public ResponseEntity<ApiResponse<InvoiceResponseDTO>> updateInvoiceStatus(@RequestBody InvoiceUpdateDTO invoiceUpdateDTO)
     {
         Invoice invoice = service.updateInvoiceStatus(invoiceUpdateDTO.getP_invoice_id(),invoiceUpdateDTO.getP_invoice_status(),invoiceUpdateDTO.getP_amount_paid());
-        return ApiResponses.ok(invoice);
+        InvoiceResponseDTO invoiceResponseDTO = InvoiceResponseDTOMapper.toDTO(invoice);
+        return ApiResponses.ok(invoiceResponseDTO);
     }
 
     @DeleteMapping("/delete-invoice/{p_invoice_id}")
@@ -79,6 +85,15 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoices")
+    public ResponseEntity<ApiResponse<List<InvoiceResponseDTO>>> getAllInvoices()
+    {
+
+        List<InvoiceResponseDTO> invoices = service.getAllInvoices();
+        return ApiResponses.ok(invoices);
+    }
+
+
+    @GetMapping("/invoices-paged")
     public Page<Invoice> searchInvoices(
             @RequestParam int clientId,
             @RequestParam List<InvoiceStatus> statuses,

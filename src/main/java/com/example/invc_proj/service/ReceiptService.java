@@ -9,8 +9,11 @@ import com.example.invc_proj.model.Receipt;
 import com.example.invc_proj.repository.InvoiceRepo;
 import com.example.invc_proj.repository.ReceiptRepo;
 import com.example.invc_proj.repository.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 import java.math.BigDecimal;
@@ -19,19 +22,23 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReceiptService {
 
-    @Autowired
-    private ReceiptRepo receiptRepository;
 
-    @Autowired
-    private InvoiceRepo invoiceRepository;
-
-    @Autowired
-    private UserRepo userRepository;
+    private final ReceiptRepo receiptRepository;
+    private final InvoiceRepo invoiceRepository;
+    private final UserRepo userRepository;
 
     //  Used for scheduled or reconciliation-driven receipt generation
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void generateAndSave(Invoice invoice, BigDecimal paymentAmount) {
+
+        InvoiceStatus invoiceStatus = invoice.getStatus();
+        if ( (invoiceStatus.equals(InvoiceStatus.UNPAID) && paymentAmount.equals(BigDecimal.ZERO) ) ) {
+            throw new RuntimeException("Invoice is not eligible for payment reconciliation");
+        }
+
         Receipt receipt = new Receipt();
 
         receipt.setInvoice(invoice);
@@ -40,14 +47,15 @@ public class ReceiptService {
         receipt.setPayment_mode("BANK"); // default mode for auto-recon
         receipt.setReference("AUTO-" + UUID.randomUUID());
         receipt.setRemarks("Automated reconciliation payment");
-
-        // If you want to tag the system user
-        userRepository.findByUsername("system").ifPresent(receipt::setAcknowledgedBy);
+        receipt.setAcknowledgedBy(userRepository.findById(invoice.getUser_id())
+                .orElseThrow(() -> new RuntimeException("User not found")));
+        //userRepository.findByUsername("system").ifPresent(receipt::setAcknowledgedBy);
 
         receiptRepository.save(receipt);
     }
 
     // Used for manual receipt creation
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public ReceiptResponseDTO addReceipt(ReceiptRequestDTO request) {
         Receipt receipt = new Receipt();
 

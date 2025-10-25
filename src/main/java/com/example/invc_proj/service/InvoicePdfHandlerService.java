@@ -3,7 +3,6 @@ package com.example.invc_proj.service;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +19,11 @@ import java.util.stream.Collectors;
 public class InvoicePdfHandlerService {
 
     private final InvoiceRepo invoiceRepo;
-
     private final ServicesRequestedRepo servicesRequestedRepo;
-
     private final InvoicePdfService invoicePdfService;
-
     private final ClientRepo clientRepository;
-
     private final BankRepo bankRepository;
-
-    private final ServicesRepo servicesRespository;
+    private final ServicesRepo servicesRepository;
 
     public byte[] getInvoicePdf(Invoice invoice) {
         List<ServicesRequested> services = servicesRequestedRepo.findByInvoiceId(invoice.getInvoice_id());
@@ -52,7 +46,7 @@ public class InvoicePdfHandlerService {
                     .map(ServicesRequested::getService_id)
                     .collect(Collectors.toList());
 
-            Map<Integer, Services> serviceMap = servicesRespository.findAllById(serviceIds)
+            Map<Integer, Services> serviceMap = servicesRepository.findAllById(serviceIds)
                     .stream()
                     .collect(Collectors.toMap(Services::getService_id, s -> s));
 

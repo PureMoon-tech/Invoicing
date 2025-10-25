@@ -3,7 +3,6 @@ package com.example.invc_proj.service;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,16 +18,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class QuoteHandlerService {
 
-    @Autowired
     private final QuoteRepo quoteRepo;
-
-    @Autowired
     private final ServicesQuotedRepo servicesQuotedRepo;
-
-    @Autowired
-    private final ServicesRepo servicesRespository;
-
-    @Autowired
+    private final ServicesRepo servicesRepository;
     private final QuotePdfService quotePdfService;
 
 
@@ -45,7 +37,7 @@ public class QuoteHandlerService {
                     .map(ServicesQuoted::getService_id)
                     .collect(Collectors.toList());
 
-            Map<Integer, Services> serviceMap = servicesRespository.findAllById(serviceIds)
+            Map<Integer, Services> serviceMap = servicesRepository.findAllById(serviceIds)
                     .stream()
                     .collect(Collectors.toMap(Services::getService_id, s -> s));
 
