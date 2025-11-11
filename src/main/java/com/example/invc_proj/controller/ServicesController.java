@@ -2,11 +2,13 @@ package com.example.invc_proj.controller;
 
 
 import com.example.invc_proj.dto.ServicesDTO;
+import com.example.invc_proj.dto.ServicesDropdownDTO;
 import com.example.invc_proj.exceptions.ApiResponse;
 import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.service.Process_Invoice;
 import com.example.invc_proj.service.ProductService;
+import com.example.invc_proj.service.ServicesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,26 +19,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/service-config")
+@RequestMapping("/api/service-config")
 @PreAuthorize("isAuthenticated()")
 public class ServicesController
 {
 
     @Autowired
-    private ProductService service;
+    private ServicesService service;
 
         @GetMapping("/services")
-            public ResponseEntity<ApiResponse<List<Services>>> getAllServices()
+            public ResponseEntity<ApiResponse<List<ServicesDropdownDTO>>> getAllServices()
             {
 
-                List<Services> services = service.getAllServices();
+                List<ServicesDropdownDTO> services = service.getAllServicesDropdown();
                 return ApiResponses.ok(services);
             }
 
         @GetMapping("/services/{id}")
-            public ResponseEntity<ApiResponse<Optional<Services>>> getServiceById(@PathVariable int id)
+            public ResponseEntity<ApiResponse<ServicesDropdownDTO>> getServiceById(@PathVariable int id)
             {
-                Optional<Services> services = service.getServiceById(id);
+                ServicesDropdownDTO services = service.getServiceDropdownById(id);
                 return ApiResponses.ok(services);
             }
 

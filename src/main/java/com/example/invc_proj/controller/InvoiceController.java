@@ -1,9 +1,6 @@
 package com.example.invc_proj.controller;
 
-import com.example.invc_proj.dto.InvoiceRequestDTO;
-import com.example.invc_proj.dto.InvoiceResponseDTO;
-import com.example.invc_proj.dto.InvoiceUpdateDTO;
-import com.example.invc_proj.dto.ServiceCostRequest;
+import com.example.invc_proj.dto.*;
 import com.example.invc_proj.exceptions.ApiResponse;
 import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.mapper.BankDetailsDTOMapper;
@@ -23,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/api/invoice")
 @PreAuthorize("isAuthenticated()")
 public class InvoiceController {
 
@@ -32,25 +29,24 @@ public class InvoiceController {
 
     /*End point to generate invoice*/
     @PostMapping("/generate-invoice/{p_client_Id}/{p_bank_id}/{p_invoice_status}/{p_invoice_type}/{p_amount_paid}")
-    public ResponseEntity<ApiResponse<Invoice>> generateInvoice (@PathVariable Integer p_client_Id,
+    public ResponseEntity<ApiResponse<InvoiceResponseDTO>> generateInvoice (@PathVariable Integer p_client_Id,
                                                                 @PathVariable Integer p_bank_id,
                                                                 @PathVariable InvoiceStatus p_invoice_status,
                                                                 @PathVariable InvoiceType p_invoice_type,
                                                                 @PathVariable BigDecimal p_amount_paid,
                                                                 @RequestBody List<ServiceCostRequest> serviceCostRequest)
     {
-        Invoice invoice = service.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,p_invoice_type,p_amount_paid,serviceCostRequest);
+        InvoiceResponseDTO invoice = service.generateInvoice(p_client_Id,p_bank_id,p_invoice_status,p_invoice_type,p_amount_paid,serviceCostRequest);
         return ApiResponses.created(invoice);
     }
 
     /*End point to generate invoice*/
     @PostMapping("/generate-invoice")
-    public ResponseEntity<ApiResponse<Invoice>> generateInvoice (
+    public ResponseEntity<ApiResponse<InvoiceResponseDTO>> generateInvoice (
             @RequestHeader
             @RequestBody InvoiceRequestDTO invoiceRequestDTO)
     {
-        System.out.println(invoiceRequestDTO);
-        Invoice invoice = service.generateInvoice(invoiceRequestDTO.getClient_Id(),
+        InvoiceResponseDTO invoice = service.generateInvoice(invoiceRequestDTO.getClient_Id(),
                 invoiceRequestDTO.getBank_id(),invoiceRequestDTO.getInvoice_status(),
                 invoiceRequestDTO.getInvoice_type(),invoiceRequestDTO.getAmount_paid(),
                 invoiceRequestDTO.getServiceCostRequest());
@@ -85,13 +81,20 @@ public class InvoiceController {
     }
 
     @GetMapping("/invoices")
-    public ResponseEntity<ApiResponse<List<InvoiceResponseDTO>>> getAllInvoices()
+    public ResponseEntity<ApiResponse<List<InvoiceResponseDTOOld>>> getAllInvoices()
     {
 
-        List<InvoiceResponseDTO> invoices = service.getAllInvoices();
+        List<InvoiceResponseDTOOld> invoices = service.getAllInvoices();
         return ApiResponses.ok(invoices);
     }
 
+    @GetMapping("/invoices/v2")
+    public ResponseEntity<ApiResponse<List<InvoiceView>>> getAllInvoice()
+    {
+
+        List<InvoiceView> invoices = service.getAllInvoice();
+        return ApiResponses.ok(invoices);
+    }
 
     @GetMapping("/invoices-paged")
     public Page<Invoice> searchInvoices(

@@ -21,8 +21,8 @@ public class ProductService {
   private final BankRepo repository_bnk;
   private final InvoiceRepo repository_invc;
   private final ServicesRequestedRepo repository_invc_srvc;
- private final SequenceNextValRepo SeqNextVal;
- private final FyTotalRepo FyTotal;
+  private final SequenceNextValRepo SeqNextVal;
+  private final FyTotalRepo FyTotal;
 
 
   @Autowired

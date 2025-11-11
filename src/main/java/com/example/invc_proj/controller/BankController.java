@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/bank-config")
+@RequestMapping("/api/bank-config")
 @PreAuthorize("isAuthenticated()")
 public class BankController
 {

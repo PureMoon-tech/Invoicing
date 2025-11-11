@@ -18,7 +18,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 
 @RestController
-@RequestMapping("/preview")
+@RequestMapping("/api/preview")
 public class BillController {
 
   /*  @Autowired

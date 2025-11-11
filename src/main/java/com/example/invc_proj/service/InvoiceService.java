@@ -1,8 +1,11 @@
 package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.InvoiceResponseDTO;
+import com.example.invc_proj.dto.InvoiceResponseDTOOld;
+import com.example.invc_proj.dto.InvoiceView;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.mapper.InvoiceResponseDTOMapper;
+import com.example.invc_proj.mapper.InvoiceResponseDTOOldMapper;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.model.Enum.InvoiceStatus;
 import com.example.invc_proj.model.Enum.InvoiceType;
@@ -38,8 +41,9 @@ public class InvoiceService {
     private final UserService userService;
     private final InvoiceNumGeneratorService invoiceNumGeneratorService;
     private final ApplicationEventPublisher eventPublisher;
+    private final InvoiceViewRepo invoiceViewRepo;
 
-    public Invoice generateInvoice(int clientId, int bankId , InvoiceStatus invoiceStatus, InvoiceType invoiceType,BigDecimal amountPaid, List<ServiceCostRequest> serviceCosts) {
+    public InvoiceResponseDTO generateInvoice(int clientId, int bankId , InvoiceStatus invoiceStatus, InvoiceType invoiceType, BigDecimal amountPaid, List<ServiceCostRequest> serviceCosts) {
 
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -114,8 +118,8 @@ public class InvoiceService {
         invoiceRepository.flush();
         //receipt generation event publishing
         eventPublisher.publishEvent(new InvoiceGeneratedEvent(savedInvoice,amountPaid));
-
-        return savedInvoice;
+        InvoiceResponseDTO invoiceResponseDTO = InvoiceResponseDTOMapper.toDTO(savedInvoice);
+        return invoiceResponseDTO;
     }
 
     //Method to calculate TDS rate
@@ -269,12 +273,17 @@ public class InvoiceService {
         return status;
     }
 
-    public  List<InvoiceResponseDTO> getAllInvoices()
+    public  List<InvoiceResponseDTOOld> getAllInvoices()
     {
-        List<InvoiceResponseDTO> invoiceResponseDTO = InvoiceResponseDTOMapper.toDTOList(invoiceRepository.findAll());
+        List<InvoiceResponseDTOOld> invoiceResponseDTO = InvoiceResponseDTOOldMapper.toDTOList(invoiceRepository.findAll());
         return invoiceResponseDTO;
     }
 
+    public  List<InvoiceView> getAllInvoice()
+    {
+        List<InvoiceView> invoiceView = invoiceViewRepo.findAll();
+        return invoiceView;
+    }
 
     public Page<Invoice> searchInvoices(int clientId,
                                         List<InvoiceStatus> statuses,

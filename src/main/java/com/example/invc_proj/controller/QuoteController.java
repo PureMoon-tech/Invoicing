@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @RestController()
-@RequestMapping("/quote")
+@RequestMapping("/api/quote")
 @PreAuthorize("isAuthenticated()")
 
 public class QuoteController {

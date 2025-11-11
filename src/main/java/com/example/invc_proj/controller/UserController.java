@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user-config")
+@RequestMapping("/api/user-config")
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 

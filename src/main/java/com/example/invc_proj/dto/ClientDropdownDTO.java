@@ -2,6 +2,7 @@ package com.example.invc_proj.dto;
 
 import lombok.*;
 @Data
+@NoArgsConstructor
 public class ClientDropdownDTO {
 
     private int client_id;

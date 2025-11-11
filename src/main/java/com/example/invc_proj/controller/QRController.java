@@ -15,7 +15,7 @@ import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/qr")
+@RequestMapping("/api/qr")
 public class QRController {
 
     private final QRCodeGeneratorService qrCodeGeneratorService;

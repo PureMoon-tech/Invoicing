@@ -9,6 +9,8 @@ import com.example.invc_proj.model.Enum.InvoiceStatus;
 import com.example.invc_proj.model.Invoice;
 import com.example.invc_proj.repository.ClientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ public class ClientService {
     }
 
     // Add a new client
+    @CacheEvict(value = "clientCache", key = "'active'")
     public void addClient(ClientDTO clientDTO) {
 
         Client client = ClientDTOMapper.mapToClient(clientDTO);
@@ -39,6 +42,7 @@ public class ClientService {
     }
 
     // Update an existing client
+    @CacheEvict(value = "clientCache", key = "'active'")
     public boolean updateClient(Client client) {
 
        // Client client = ClientDTOMapper.mapToClient(clientDTO);
@@ -71,6 +75,7 @@ public class ClientService {
     }
 
     // Get list of clients with only client_id and client_name (for dropdown)
+    @Cacheable(value = "clientCache", key = "'active'")
     public List<ClientDropdownDTO> getClientsForDropdown() {
 
         return clientRepo.findClientsForDropdown();

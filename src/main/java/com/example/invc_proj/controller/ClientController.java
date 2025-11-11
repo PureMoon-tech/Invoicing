@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/client-config")
+@RequestMapping("/api/client-config")
 @PreAuthorize("isAuthenticated()")
 public class ClientController {
 
