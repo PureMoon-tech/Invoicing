@@ -3,6 +3,7 @@ package com.example.invc_proj.repository;
 
 import com.example.invc_proj.dto.InvoiceView;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -15,6 +16,9 @@ public interface InvoiceViewRepo extends JpaRepository<InvoiceView,Long> {
     List<InvoiceView> findByClientNameContainingIgnoreCase(String name);
     List<InvoiceView> findByInvoiceGeneratedDateBetween(Date from, Date to);
     List<InvoiceView> findByTotalGreaterThanEqual(BigDecimal min);
+
+    @Query(value = "SELECT * FROM INVOICEVIEW",nativeQuery = true)
+    List<InvoiceView> findAllInvoices();
 
     // Prevent accidental mutations (optional but safe)
     @Override

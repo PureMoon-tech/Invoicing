@@ -42,10 +42,12 @@ public class JwtUtil {
      //* @param roles A list of roles/authorities for the user.
      * @return The generated JWT string.
      */
-   public String generateToken(String username, List<String> roles) {
+   public String generateToken(String username, Integer userId,String emailId,List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roles) // Add roles claim
+                .claim("userId",userId)
+                .claim("emailId",emailId)
+                .claim("roles", roles)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

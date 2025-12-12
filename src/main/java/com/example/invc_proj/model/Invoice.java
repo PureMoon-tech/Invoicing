@@ -32,7 +32,10 @@ public class Invoice {
     private Date invoice_generated_date;
     private Date last_updated_date;
     private BigDecimal total;
+
+    @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
+
     private int bank_id;
     private BigDecimal amountPaid;
 

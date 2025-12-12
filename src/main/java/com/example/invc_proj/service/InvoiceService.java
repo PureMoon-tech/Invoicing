@@ -281,7 +281,7 @@ public class InvoiceService {
 
     public  List<InvoiceView> getAllInvoice()
     {
-        List<InvoiceView> invoiceView = invoiceViewRepo.findAll();
+        List<InvoiceView> invoiceView = invoiceViewRepo.findAllInvoices();
         return invoiceView;
     }
 

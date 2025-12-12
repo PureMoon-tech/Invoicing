@@ -6,6 +6,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Immutable;
 
 
@@ -15,6 +17,8 @@ import java.util.Date;
 @Entity
 @Immutable
 @Table(name = "InvoiceView")
+@Getter
+@Setter
 public class InvoiceView {
 
     @Id

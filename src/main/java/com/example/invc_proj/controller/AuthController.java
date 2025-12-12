@@ -6,6 +6,7 @@ import com.example.invc_proj.dto.RefreshRequest;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.exceptions.InvalidRefreshTokenException;
 import com.example.invc_proj.model.AuditLog;
+import com.example.invc_proj.model.UserPrincipal;
 import com.example.invc_proj.repository.AudtiLogRepo;
 import com.example.invc_proj.security.CustomUserDetailsService;
 import com.example.invc_proj.security.JwtUtil;
@@ -131,14 +132,14 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                             request.getPassword()
                     )
             );
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            System.out.println(userDetails);
-            List<String> roles = userDetails.getAuthorities()
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            System.out.println(userPrincipal);
+            List<String> roles = userPrincipal.getAuthorities()
                     .stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
-            String token = jwtUtil.generateToken(request.getUsername(), roles);
+            String token = jwtUtil.generateToken(userPrincipal.getUsername(), userPrincipal.getUserId(),userPrincipal.getEmailId(),roles);
             System.out.println(token);
             String refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
             System.out.println(refreshToken);
@@ -255,8 +256,8 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         String username = refreshTokenService.validateAndGetUsername(req.getRefreshToken())
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid/expired refresh token"));
         System.out.println("username"+username);
-        UserDetails user = CustomUserDetailsService.loadUserByUsername(username);
-        String newAccessToken = jwtUtil.generateToken(username,
+        UserPrincipal user = CustomUserDetailsService.loadUserByUsername(username);
+        String newAccessToken = jwtUtil.generateToken(username,user.getUserId(),user.getEmailId(),
                 user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()));

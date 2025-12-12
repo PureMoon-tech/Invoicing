@@ -34,7 +34,10 @@ public class Quote {
     private Date quote_generated_date;
     private Date last_updated_date;
     private BigDecimal total;
+
+    @Enumerated(EnumType.STRING)
     private QuoteStatus status;
+
     @OneToMany(mappedBy = "quote_id", cascade = CascadeType.ALL)
     //@JsonIgnore
     private List<ServicesQuoted> quoteSrvcs;
