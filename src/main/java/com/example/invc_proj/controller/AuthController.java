@@ -13,9 +13,12 @@ import com.example.invc_proj.security.JwtUtil;
 import com.example.invc_proj.security.RefreshTokenService;
 import com.example.invc_proj.service.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -146,7 +150,30 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
             // Step 2: Increment active user count after successful authentication
             // licenseManager.incrementActiveUsers();
 
-            return ResponseEntity.ok(new AuthResponse(token,refreshToken));
+            //return ResponseEntity.ok(new AuthResponse(token,refreshToken));
+            ResponseCookie accessTokenCookie = ResponseCookie
+                    .from("ACCESS_TOKEN", token)
+                    .httpOnly(true)
+                    .secure(false)           // true in prod (HTTPS)
+                    .sameSite("Lax")        // or "Strict"
+                    .path("/")
+                    .maxAge(Duration.ofMinutes(15))
+                    .build();
+
+            ResponseCookie refreshTokenCookie = ResponseCookie
+                    .from("REFRESH_TOKEN", refreshToken)
+                    .httpOnly(true)
+                    .secure(false)
+                    .sameSite("Strict")
+                    .path("/auth/refresh")
+                    .maxAge(Duration.ofDays(1))
+                    .build();
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                    .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                    .body(new AuthResponse("Login successful"));
+
         }
         catch (BadCredentialsException ex)
         {
@@ -250,8 +277,8 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok("Password has been reset successfully");
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(@RequestBody RefreshRequest req)
+    @PostMapping("/refreshold")
+    public ResponseEntity<AuthResponse> refreshold(@RequestBody RefreshRequest req)
     {
         String username = refreshTokenService.validateAndGetUsername(req.getRefreshToken())
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid/expired refresh token"));
@@ -265,7 +292,86 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         System.out.println("req.getRefreshToken()"+req.getRefreshToken());
         String newRefreshToken = refreshTokenService.rotateRefreshToken(req.getRefreshToken(), username);
         System.out.println("newRefreshToken"+newRefreshToken);
-        return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken));
+        //return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken));
+        ResponseCookie accessTokenCookie = ResponseCookie
+                .from("ACCESS_TOKEN", newAccessToken)
+                .httpOnly(true)
+                .secure(false)           // true in prod (HTTPS)
+                .sameSite("Lax")        // or "Strict"
+                .path("/")
+                .maxAge(Duration.ofMinutes(15))
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from("REFRESH_TOKEN", newRefreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .sameSite("Strict")
+                .path("/auth/refresh")
+                .maxAge(Duration.ofDays(1))
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(new AuthResponse("Login successful"));
+
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        String refreshToken = jwtUtil.extractRefreshToken(request);
+
+        if (refreshToken == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponse("Refresh token missing"));
+        }
+
+        String username = refreshTokenService
+                .validateAndGetUsername(refreshToken)
+                .orElseThrow(() ->
+                        new InvalidRefreshTokenException("Invalid/expired refresh token"));
+
+        UserPrincipal user =
+                CustomUserDetailsService.loadUserByUsername(username);
+
+        String newAccessToken = jwtUtil.generateToken(
+                username,
+                user.getUserId(),
+                user.getEmailId(),
+                user.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList())
+        );
+
+        String newRefreshToken =
+                refreshTokenService.rotateRefreshToken(refreshToken, username);
+
+        ResponseCookie accessTokenCookie = ResponseCookie
+                .from("ACCESS_TOKEN", newAccessToken)
+                .httpOnly(true)
+                .secure(false)              // true in prod (HTTPS)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(Duration.ofMinutes(15))
+                .build();
+
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from("REFRESH_TOKEN", newRefreshToken)
+                .httpOnly(true)
+                .secure(false)              // true in prod
+                .sameSite("Strict")
+                .path("/auth/refresh")
+                .maxAge(Duration.ofDays(7))
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(new AuthResponse("Token refreshed"));
     }
 
    /* @PostMapping("/logout")
