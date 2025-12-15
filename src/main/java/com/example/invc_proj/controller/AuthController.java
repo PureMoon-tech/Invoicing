@@ -172,7 +172,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                     .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                    .body(new AuthResponse("Login successful"));
+                    .body(new AuthResponse(token,"Login successful"));
 
         }
         catch (BadCredentialsException ex)
@@ -282,16 +282,16 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
     {
         String username = refreshTokenService.validateAndGetUsername(req.getRefreshToken())
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid/expired refresh token"));
-        System.out.println("username"+username);
+        //System.out.println("username"+username);
         UserPrincipal user = CustomUserDetailsService.loadUserByUsername(username);
         String newAccessToken = jwtUtil.generateToken(username,user.getUserId(),user.getEmailId(),
                 user.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()));
-        System.out.println("newAccessToken"+newAccessToken);
-        System.out.println("req.getRefreshToken()"+req.getRefreshToken());
+        //System.out.println("newAccessToken"+newAccessToken);
+        //System.out.println("req.getRefreshToken()"+req.getRefreshToken());
         String newRefreshToken = refreshTokenService.rotateRefreshToken(req.getRefreshToken(), username);
-        System.out.println("newRefreshToken"+newRefreshToken);
+        //System.out.println("newRefreshToken"+newRefreshToken);
         //return ResponseEntity.ok(new AuthResponse(newAccessToken, newRefreshToken));
         ResponseCookie accessTokenCookie = ResponseCookie
                 .from("ACCESS_TOKEN", newAccessToken)
@@ -314,7 +314,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(new AuthResponse("Login successful"));
+                .body(new AuthResponse(newAccessToken,"Login successful"));
 
     }
 
@@ -327,7 +327,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
         if (refreshToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse("Refresh token missing"));
+                    .body(new AuthResponse("access_token","Refresh token missing"));
         }
 
         String username = refreshTokenService
@@ -371,7 +371,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(new AuthResponse("Token refreshed"));
+                .body(new AuthResponse(newAccessToken,"Token refreshed"));
     }
 
    /* @PostMapping("/logout")
