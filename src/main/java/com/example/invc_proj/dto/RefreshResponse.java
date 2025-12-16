@@ -1,4 +1,3 @@
-
 package com.example.invc_proj.dto;
 
 import lombok.AllArgsConstructor;
@@ -8,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    //private String token;
-    //private String refreshToken;
-    private UserPrincipalDTO userPrincipal;
+public class RefreshResponse {
+
     private String message;
 }

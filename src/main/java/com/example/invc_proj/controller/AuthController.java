@@ -1,8 +1,6 @@
 package com.example.invc_proj.controller;
 
-import com.example.invc_proj.dto.AuthRequest;
-import com.example.invc_proj.dto.AuthResponse;
-import com.example.invc_proj.dto.RefreshRequest;
+import com.example.invc_proj.dto.*;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.exceptions.InvalidRefreshTokenException;
 import com.example.invc_proj.model.AuditLog;
@@ -119,7 +117,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request)
     {
-        System.out.println(request);
+        //System.out.println(request);
 
 
 
@@ -137,16 +135,17 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     )
             );
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            System.out.println(userPrincipal);
+            //System.out.println(userPrincipal);
             List<String> roles = userPrincipal.getAuthorities()
                     .stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toList());
 
             String token = jwtUtil.generateToken(userPrincipal.getUsername(), userPrincipal.getUserId(),userPrincipal.getEmailId(),roles);
-            System.out.println(token);
+            //System.out.println(token);
+            UserPrincipalDTO userDTO = new UserPrincipalDTO(userPrincipal.getUsername(),userPrincipal.getUserId(),userPrincipal.getEmailId(),roles);
             String refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
-            System.out.println(refreshToken);
+            //System.out.println(refreshToken);
             // Step 2: Increment active user count after successful authentication
             // licenseManager.incrementActiveUsers();
 
@@ -172,7 +171,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                     .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                    .body(new AuthResponse(token,"Login successful"));
+                    .body(new AuthResponse(userDTO,"Login successful"));
 
         }
         catch (BadCredentialsException ex)
@@ -278,7 +277,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
     }
 
     @PostMapping("/refreshold")
-    public ResponseEntity<AuthResponse> refreshold(@RequestBody RefreshRequest req)
+    public ResponseEntity<RefreshResponse> refreshold(@RequestBody RefreshRequest req)
     {
         String username = refreshTokenService.validateAndGetUsername(req.getRefreshToken())
                 .orElseThrow(() -> new InvalidRefreshTokenException("Invalid/expired refresh token"));
@@ -314,12 +313,12 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(new AuthResponse(newAccessToken,"Login successful"));
+                .body(new RefreshResponse("Login successful"));
 
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(
+    public ResponseEntity<RefreshResponse> refresh(
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -327,7 +326,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
         if (refreshToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse("access_token","Refresh token missing"));
+                    .body(new RefreshResponse("Refresh token missing"));
         }
 
         String username = refreshTokenService
@@ -346,6 +345,9 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())
         );
+        UserPrincipalDTO userDTO = new UserPrincipalDTO(user.getUsername(),user.getUserId(),user.getEmailId(),                user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
 
         String newRefreshToken =
                 refreshTokenService.rotateRefreshToken(refreshToken, username);
@@ -371,7 +373,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
-                .body(new AuthResponse(newAccessToken,"Token refreshed"));
+                .body(new RefreshResponse("Token refreshed"));
     }
 
    /* @PostMapping("/logout")

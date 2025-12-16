@@ -1,16 +1,17 @@
-
 package com.example.invc_proj.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-    //private String token;
-    //private String refreshToken;
-    private UserPrincipalDTO userPrincipal;
-    private String message;
+public class UserPrincipalDTO {
+    private String userName;
+    private int userId;
+    private String userEmail;
+    private List<String> roles;
 }
