@@ -46,7 +46,7 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<String>> addUser(@RequestBody UserDTO user)
     {
-        System.out.println("calling add user"+user);
+        //System.out.println("calling add user"+user);
         return ApiResponses.created(service.addUser(user));
         //return ResponseEntity.status(201).body("user added successfully");
     }
@@ -54,7 +54,7 @@ public class UserController {
     @PutMapping("/users")
     public ResponseEntity<ApiResponse<String>> alterUser(@RequestBody User user)
     {
-        System.out.println("calling add user"+user);
+        //System.out.println("calling add user"+user);
         service.alterUser(user);
         return ApiResponses.ok("user altered successfully");
     }

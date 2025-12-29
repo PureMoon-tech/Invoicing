@@ -78,11 +78,11 @@ public class QuoteService {
         quote.setUser_id(userId); // Set the logged-in user's ID
         quote.setQuote_number(quoteNumGeneratorService.generateQuoteNumber(quoteType));
         quote.setStatus(quoteStatus);
-        System.out.println(quote);
+        //System.out.println(quote);
 
         Quote savedQuote = quoteRepository.save(quote);
 
-        System.out.print(savedQuote);
+        //System.out.print(savedQuote);
 
         for (ServicesQuoted serviceRequest : servicesQuotedList) {
             serviceRequest.setQuote_id(savedQuote);

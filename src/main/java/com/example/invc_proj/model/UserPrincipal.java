@@ -11,11 +11,33 @@ import java.util.Collections;
 public class UserPrincipal implements UserDetails {
 
 
-    private final User User;
+    private final Integer Id;
+    private final String Username;
+    private final String Password;
+    private final String EmailId;
+    private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal (User User)
-    {
-        this.User = User;
+//    public UserPrincipal (User User) {this.User = User; }
+
+    public UserPrincipal(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+
+        this.Id = user.getId();
+        this.Username = user.getUsername();
+        this.Password = user.getPassword();
+        this.EmailId = user.getEmailId();
+
+        // Safely extract role authority (defensive against null role)
+        String roleName = "USER"; // fallback default
+        if (user.getRole() != null && user.getRole().getRoleName() != null) {
+            roleName = user.getRole().getRoleName().toUpperCase(); // normalize
+        }
+
+        this.authorities = Collections.singletonList(
+                new SimpleGrantedAuthority(roleName)
+        );
     }
 
    /* @Override
@@ -23,34 +45,39 @@ public class UserPrincipal implements UserDetails {
         return Collections.singleton(new SimpleGrantedAuthority("user"));
     }*/
 
-    @Override
+   /* @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + User.getRole().getRoleName()));
     }
+    */
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities; // immutable, pre-computed
+    }
 
 
     @Override
     public String getPassword() {
-        System.out.println("get password");
-        return User.getPassword();
+       // System.out.println("get password");
+        return Password;
     }
 
     @Override
     public String getUsername() {
-        System.out.println("get username");
-        return User.getUsername();
+        //System.out.println("get username");
+        return Username;
     }
 
     public Integer getUserId()
     {
-        return User.getId();
+        return Id;
     }
 
     public String getEmailId()
     {
-        return User.getEmailId();
+        return EmailId;
     }
 
     @Override

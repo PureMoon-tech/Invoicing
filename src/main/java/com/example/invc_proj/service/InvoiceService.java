@@ -48,7 +48,7 @@ public class InvoiceService {
         //String username = ((USERS) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUserName();
         UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userPrincipal.getUsername();
-        System.out.println(username);
+       // System.out.println(username);
         Optional<User> user = userService.getUserByName(username);
         int userId = user.get().getId();
         //int total = serviceCosts.getFirst().getTotalCost();
@@ -102,11 +102,11 @@ public class InvoiceService {
         invoice.setBank_id(bankId);
         invoice.setInvoice_number(invoiceNumGeneratorService.generateInvoiceNumber(invoiceType));
 
-        System.out.println(invoice);
+        //System.out.println(invoice);
         // Save the invoice to the repository
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
-        System.out.print(savedInvoice);
+        //System.out.print(savedInvoice);
 
         // Now that the invoice is saved, updating the ServicesRequested list with the correct invoiceId
         //servicesRequestedList.forEach(serviceRequest -> serviceRequest.setInvoice_id(savedInvoice.getInvoice_id()));

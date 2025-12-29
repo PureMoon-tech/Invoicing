@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 //@EnableDiscoveryClient
-@EnableJpaRepositories(basePackages = "com.example.invc_proj.repository")
+//@EnableJpaRepositories(basePackages = "com.example.invc_proj.repository")
 @EnableAsync
 @EnableCaching
 public class InvcProjApplication {

@@ -137,19 +137,19 @@ public class JwtUtil {
             // 3. Implicitly checks signature and other parsing errors via extractAllClaims
             return (usernameInToken.equals(userDetailsUsername)) && !isTokenExpired(token);
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: " + e.getMessage());
+            //System.out.println("JWT token is expired: " + e.getMessage());
             return false;
         } catch (SignatureException e) {
-            System.out.println("Invalid JWT signature: " + e.getMessage());
+            //System.out.println("Invalid JWT signature: " + e.getMessage());
             return false;
         } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
+            //System.out.println("Invalid JWT token: " + e.getMessage());
             return false;
         } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: " + e.getMessage());
+            //System.out.println("JWT token is unsupported: " + e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: " + e.getMessage());
+            //System.out.println("JWT claims string is empty: " + e.getMessage());
             return false;
         }
     }
@@ -200,19 +200,19 @@ public class JwtUtil {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
-            System.out.println("JWT token is expired: " + e.getMessage());
+            //System.out.println("JWT token is expired: " + e.getMessage());
             return false;
         } catch (SignatureException e) {
-            System.out.println("Invalid JWT signature: " + e.getMessage());
+            //System.out.println("Invalid JWT signature: " + e.getMessage());
             return false;
         } catch (MalformedJwtException e) {
-            System.out.println("Invalid JWT token: " + e.getMessage());
+            //System.out.println("Invalid JWT token: " + e.getMessage());
             return false;
         } catch (UnsupportedJwtException e) {
-            System.out.println("JWT token is unsupported: " + e.getMessage());
+            //System.out.println("JWT token is unsupported: " + e.getMessage());
             return false;
         } catch (IllegalArgumentException e) {
-            System.out.println("JWT claims string is empty: " + e.getMessage());
+            //System.out.println("JWT claims string is empty: " + e.getMessage());
             return false;
         }
     }

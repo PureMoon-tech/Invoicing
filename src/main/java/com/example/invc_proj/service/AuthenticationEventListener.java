@@ -100,8 +100,8 @@ import java.time.LocalDateTime;
             auditLog.setUsername(username);
             auditLog.setAction(actionType);
             auditLog.setTimestamp(LocalDateTime.now());
-            System.out.println(username);
-            System.out.println(actionType);
+            //System.out.println(username);
+            //System.out.println(actionType);
 
 
 

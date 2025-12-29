@@ -36,8 +36,8 @@ public class QuoteController {
                                                     @PathVariable QuoteType p_quote_type,
                                                     @RequestBody List<ServiceCostRequest> serviceCostRequest)
     {
-        System.out.println(p_client_Id);
-        System.out.println(serviceCostRequest);
+        //System.out.println(p_client_Id);
+        //System.out.println(serviceCostRequest);
         Quote quote = service.generateQuote(p_client_Id,p_quote_status,p_quote_type,serviceCostRequest);
         return ResponseEntity.status(201).body(quote);
     }

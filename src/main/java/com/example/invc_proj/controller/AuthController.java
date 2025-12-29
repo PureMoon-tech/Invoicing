@@ -3,6 +3,7 @@ package com.example.invc_proj.controller;
 import com.example.invc_proj.dto.*;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.exceptions.InvalidRefreshTokenException;
+import com.example.invc_proj.license.LicenseManager;
 import com.example.invc_proj.model.AuditLog;
 import com.example.invc_proj.model.UserPrincipal;
 import com.example.invc_proj.repository.AudtiLogRepo;
@@ -48,6 +49,9 @@ import java.util.List;
 
     @Autowired
     private AudtiLogRepo audtiLogRepo;
+
+    @Autowired
+    private LicenseManager licenseManager;
 
     private final RefreshTokenService refreshTokenService;
 
@@ -127,6 +131,14 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     .body("License validation failed: Expired or user limit exceeded.");
         }
         */
+
+        if (licenseManager.shouldCheckOnLogin()) {
+            try {
+                licenseManager.checkLicense();
+            } catch (Exception e) {
+                throw new RuntimeException("Login failed: " + e.getMessage(), e);
+            }
+        }
         try {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(

@@ -90,7 +90,7 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(rawPassword);
         NewUser.setPassword(encodedPassword);
-        System.out.println(user.getPassword());
+        //System.out.println(user.getPassword());
         //NewUser.setPasswordSalt(user.getPasswordSalt());
         NewUser.setPasswordSalt(rawPassword);
 
@@ -101,9 +101,9 @@ public class UserService {
 
         NewUser.setEmailId(user.getEmailId());
 
-        System.out.println(NewUser);
+        //System.out.println(NewUser);
         User_repo.save(NewUser);
-        System.out.println(NewUser);
+        //System.out.println(NewUser);
         emailService.sendWelcomeEmail(NewUser.getEmailId(),NewUser.getUsername());
 
         return "User added successfully";
