@@ -1,6 +1,8 @@
 
 package com.example.invc_proj.security;
 
+
+import com.example.invc_proj.dto.UserPrincipalDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -104,6 +106,14 @@ public class JwtUtil {
                 .getBody();
     }
 
+    public UserPrincipalDTO extractUserPrincipal(String token) {
+        return UserPrincipalDTO.builder()
+                .userName(extractClaim(token, Claims::getSubject))
+                .userId(extractClaim(token, claims -> claims.get("userId", Integer.class)))
+                .userEmail(extractClaim(token, claims -> claims.get("emailId", String.class)))
+                .roles(extractClaim(token, claims -> (List<String>) claims.get("roles")))
+                .build();
+    }
    /* public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
