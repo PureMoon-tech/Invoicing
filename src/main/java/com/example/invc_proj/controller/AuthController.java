@@ -126,19 +126,28 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
 
         // Step 1: Validate the license before authenticating the user
-       /* if (!licenseManager.isLicenseValid()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("License validation failed: Expired or user limit exceeded.");
-        }
-        */
-
-        if (licenseManager.shouldCheckOnLogin()) {
+       /* if (licenseManager.shouldCheckOnLogin()) {
             try {
                 licenseManager.checkLicense();
             } catch (Exception e) {
                 throw new RuntimeException("Login failed: " + e.getMessage(), e);
             }
+        }*/
+        HttpHeaders headers = new HttpHeaders();
+        if (licenseManager.isExpired()) {
+            headers.add("X-License-Status", "EXPIRED");
+            headers.add("X-License-Warning", "License has expired. Application is in READ-ONLY mode.");
+            headers.add("X-License-Severity", "CRITICAL");
+            headers.add("X-Read-Only-Mode", "true");
+
+        } else if (licenseManager.isExpiringSoon(7)) {
+            long days = licenseManager.getDaysRemaining();
+            headers.add("X-License-Status", "EXPIRING_SOON");
+            headers.add("X-License-Warning", "Your license will expire in " + days + " days.");
+            headers.add("X-License-Severity", days <= 3 ? "CRITICAL" : "WARNING");
+            headers.add("X-License-Days-Remaining", String.valueOf(days));
         }
+
         try {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -176,13 +185,15 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     .httpOnly(true)
                     .secure(false)
                     .sameSite("Strict")
-                    .path("/auth/refresh")
+                    //.path("/auth/refresh")
+                    .path("/")
                     .maxAge(Duration.ofDays(1))
                     .build();
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
                     .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                    .headers(headers)
                     .body(new AuthResponse(userDTO,"Login successful"));
 
         }
@@ -233,10 +244,18 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String refreshToken = jwtUtil.extractRefreshToken(request);
+        System.out.println(refreshToken);
+       // System.out.println(request.getCookies().toString());
         if (auth != null && auth.isAuthenticated()) {
-            String username = auth.getName();
+           String username = auth.getName();
+            if (refreshToken != null) {
+                System.out.println(refreshToken);
+                refreshTokenService.revokeToken(refreshToken);
+            }
+
             AuditLog log = new AuditLog();
             log.setUsername(username);
             log.setAction("LOGOUT");
@@ -244,8 +263,13 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
             audtiLogRepo.save(log);
         }
 
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, createClearedCookie("ACCESS_TOKEN").toString())
+                .header(HttpHeaders.SET_COOKIE, createClearedCookie("REFRESH_TOKEN").toString())
+                .body("Logged out successfully");
     }
+
+
 
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String tokenHeader) {
@@ -394,7 +418,57 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         return ResponseEntity.ok("Logged out");
     }
 */
+   private ResponseCookie createClearedCookie(String name) {
+       System.out.println(name);
+       return ResponseCookie.from(name, "")
+               .path("/")
+               .httpOnly(true)
+               .secure(true)
+               .sameSite("Strict")
+               .maxAge(0)
+               .build();
+   }
 
+    private ResponseCookie createAccessTokenCookie(String name, String token) {
+        return  ResponseCookie
+                .from(name, token)
+                .httpOnly(true)
+                .secure(false)           // true in prod (HTTPS)
+                .sameSite("Lax")        // or "Strict"
+                .path("/")
+                .maxAge(Duration.ofMinutes(15))
+                .build();
+
+    }
+
+    private ResponseCookie createRefreshTokenCookie(String name, String token) {
+        return  ResponseCookie
+                .from(name, token)
+                .httpOnly(true)
+                .secure(false)           // true in prod (HTTPS)
+                .sameSite("Lax")        // or "Strict"
+                .path("/")
+                .maxAge(Duration.ofDays(1))
+                .build();
+
+    }
+
+    private HttpHeaders buildLicenseHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        if (licenseManager.isExpired()) {
+            headers.add("X-License-Status", "EXPIRED");
+            headers.add("X-License-Warning", "License has expired. Application is in READ-ONLY mode.");
+            headers.add("X-License-Severity", "CRITICAL");
+            headers.add("X-Read-Only-Mode", "true");
+        } else if (licenseManager.isExpiringSoon(7)) {
+            long days = licenseManager.getDaysRemaining();
+            headers.add("X-License-Status", "EXPIRING_SOON");
+            headers.add("X-License-Warning", "Your license will expire in " + days + " days.");
+            headers.add("X-License-Severity", days <= 3 ? "CRITICAL" : "WARNING");
+            headers.add("X-License-Days-Remaining", String.valueOf(days));
+        }
+        return headers;
+    }
 }
 
 

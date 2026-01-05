@@ -3,6 +3,8 @@ package com.example.invc_proj.license;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -54,12 +56,12 @@ public class LicenseManager {
         lastChecked = LocalDateTime.now();
         System.out.println(licenseInfo.toString());
 
-        if (licenseInfo.isExpired()) {
+       /* if (licenseInfo.isExpired()) {
             throw new RuntimeException(
                     "License expired on " + licenseInfo.getExpiryDate() +
                             ". Please contact support to renew your license."
             );
-        }
+        }*/ // commented since expired license is moved to read only mode
     }
 
     /**
@@ -69,6 +71,20 @@ public class LicenseManager {
         performValidation();
     }
 
+    public boolean isExpired()
+          {
+              return licenseInfo.isExpired();
+          }
+
+    public boolean isExpiringSoon(Integer days) {
+        LocalDate expiryDate = licenseInfo.getExpiryDate();
+        return !expiryDate.isAfter(LocalDate.now().plusDays(days));
+    }
+
+    public Integer getDaysRemaining() {
+        LocalDate expiryDate = licenseInfo.getExpiryDate();
+        return (int) ChronoUnit.DAYS.between(LocalDate.now(), expiryDate);
+    }
     /**
      * Check if periodic validation is needed
      */
@@ -85,15 +101,15 @@ public class LicenseManager {
         if (needsPeriodicCheck()) {
             try {
                 checkLicense();
-                System.out.println("✓ Periodic license check passed");
+               // System.out.println("✓ Periodic license check passed");
             } catch (Exception e) {
                 throw new RuntimeException("License validation failed: " + e.getMessage(), e);
             }
         }
     }
 
-    public LicenseVerifier.LicenseInfo getLicenseInfo()
-    {
+    public LicenseVerifier.LicenseInfo getLicenseInfo() throws Exception {
+        licenseInfo = verifier.verifyLicense(licenseKey);
         return licenseInfo;
     }
 

@@ -32,7 +32,7 @@ public class UserPrincipal implements UserDetails {
         // Safely extract role authority (defensive against null role)
         String roleName = "USER"; // fallback default
         if (user.getRole() != null && user.getRole().getRoleName() != null) {
-            roleName = user.getRole().getRoleName().toUpperCase(); // normalize
+            roleName = "ROLE_" + user.getRole().getRoleName().toUpperCase(); // normalize
         }
 
         this.authorities = Collections.singletonList(

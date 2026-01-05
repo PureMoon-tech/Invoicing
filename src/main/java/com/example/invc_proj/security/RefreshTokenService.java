@@ -29,7 +29,7 @@ public class RefreshTokenService {
 
         // Generate raw JWT refresh token
         String rawToken = jwtUtil.generateRefreshToken(username);
-        System.out.println("rawToken"+rawToken);
+       // System.out.println("rawToken"+rawToken);
         // Hash it before storing
         //String hashedToken = encoder.encode(rawToken);
         //System.out.println("hashedToken"+hashedToken);
@@ -53,7 +53,7 @@ public class RefreshTokenService {
         String redisKey = REFRESH_TOKEN_PREFIX + rawToken;
 
         String username = redisTemplate.opsForValue().get(redisKey);
-        System.out.println("username"+username);
+       // System.out.println("username"+username);
         if (username != null && jwtUtil.validateToken(rawToken)) {
             return Optional.of(username);
         }
@@ -67,7 +67,12 @@ public class RefreshTokenService {
         //String hashedToken = encoder.encode(rawToken);
         String tokenKey = REFRESH_TOKEN_PREFIX + rawToken;
         String username = redisTemplate.opsForValue().get(tokenKey);
+        if (rawToken == null || rawToken.isBlank()) {
+            return;
+        }
+
         if (username != null) {
+            System.out.println(tokenKey);
             redisTemplate.delete(tokenKey);
             redisTemplate.delete("refresh:user:" + username);
         }

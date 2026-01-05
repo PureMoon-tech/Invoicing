@@ -25,6 +25,14 @@ public class CorsConfig {
                         .allowedOrigins("http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
+                        .exposedHeaders(
+                                // MUST expose your custom headers!
+                                "X-License-Status",
+                                "X-License-Warning",
+                                "X-License-Severity",
+                                "X-Read-Only-Mode",
+                                "X-License-Days-Remaining"
+                        )
                         .allowCredentials(true);
             }
         };

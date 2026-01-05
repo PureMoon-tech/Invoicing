@@ -12,7 +12,6 @@ import java.util.Map;
 import java.security.*;
 
 /**
- * License Verifier - Embed this in your client application
  * Verifies licenses offline using the public key
  */
 public class LicenseVerifier {
@@ -28,6 +27,8 @@ public class LicenseVerifier {
         KeyFactory kf = KeyFactory.getInstance(ALGORITHM);
         this.publicKey = kf.generatePublic(spec);
     }
+
+
 
     /**
      * Verify and parse a license key
@@ -81,7 +82,7 @@ public class LicenseVerifier {
             if (expiry == null) return false;
 
             LocalDate expiryDate = LocalDate.parse(expiry, DATE_FORMAT);
-            System.out.println(expiryDate);
+           // System.out.println(expiryDate);
             return LocalDate.now().isAfter(expiryDate);
         }
 
