@@ -25,6 +25,7 @@ public class InvoicePdfHandlerService {
     private final BankRepo bankRepository;
     private final ServicesRepo servicesRepository;
 
+    @Transactional(readOnly = true)
     public byte[] getInvoicePdf(Invoice invoice) {
         List<ServicesRequested> services = servicesRequestedRepo.findByInvoiceId(invoice.getInvoice_id());
         return invoicePdfService.generateInvoicePdf(invoice, services);

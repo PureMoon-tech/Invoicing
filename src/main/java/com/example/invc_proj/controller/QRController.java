@@ -22,8 +22,6 @@ public class QRController {
 
     @GetMapping("/generate")
     public byte[] InvoiceQR(@RequestBody Invoice invoice) throws IOException, WriterException {
-        // Logic to generate QR code for an invoice
-
         byte[] qr = qrCodeGeneratorService.generateQrCodeAsBytes(invoice);
         return qr;
     }

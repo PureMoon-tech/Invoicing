@@ -130,18 +130,26 @@ public class ClientService {
         clientRepo.deleteById(pClientId);
     }
 
-/*    public Optional<Client> getClientById(int id)
-    {
-      System.out.println("get by id"+id);
-       return repository_clnt.findById(id);
 
-    }
+    private static final int DEFAULT_LIMIT = 20;
+    private static final int MAX_LIMIT     = 50;
 
-    public void addClients(Client clnt)
-    {
-        repository_clnt.save(clnt);
+    public List<ClientDropdownDTO> searchLov(String q, Integer limit) {
+        int effectiveLimit = (limit == null || limit > MAX_LIMIT) ? DEFAULT_LIMIT : limit;
+        String searchQuery = (q == null) ? "" : q.trim();
+        String pattern     = "%" + searchQuery + "%";
+
+        return clientRepo.searchForLov(searchQuery, pattern, effectiveLimit)
+                .stream()
+                .map(row -> {
+                    ClientDropdownDTO dto = new ClientDropdownDTO();
+                    dto.setClient_id(((Number) row[0]).intValue());
+                    dto.setClient_name((String) row[1]);
+                    dto.setClient_type((String) row[2]);
+                    return dto;
+                })
+                .toList();
     }
-    */
 
 
 }

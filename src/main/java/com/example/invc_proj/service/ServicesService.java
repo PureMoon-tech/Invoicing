@@ -7,6 +7,8 @@ import com.example.invc_proj.mapper.ServicesDropdownDTOMapper;
 import com.example.invc_proj.model.Services;
 import com.example.invc_proj.repository.ServicesRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class ServicesService {
         return servicesRepo.findAll();
     }
 
+    @Cacheable(value = "servicesDropdown-lov")
     public List<ServicesDropdownDTO> getAllServicesDropdown()
     {
         List<Services> services = servicesRepo.findAll();
@@ -45,18 +48,21 @@ public class ServicesService {
         return ServicesDropdownDTOMapper.toDTO(service);
     }
 
+    @CacheEvict(value = "servicesDropdown-lov")
     public void addServices(ServicesDTO srvc)
     {
         Services services = ServicesDTOMapper.mapToService(srvc);
         servicesRepo.save(services);
     }
 
+    @CacheEvict(value = "servicesDropdown-lov")
     public void updateServiceStatus(int pServiceId)
     {
         Services services = servicesRepo.findById(pServiceId).
                 orElseThrow(() -> new RuntimeException("Service not found"));
     }
 
+    @CacheEvict(value = "servicesDropdown-lov")
     public void deleteService(int pServiceId)
     {
         servicesRepo.deleteById(pServiceId);

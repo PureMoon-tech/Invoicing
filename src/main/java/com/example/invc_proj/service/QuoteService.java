@@ -78,11 +78,8 @@ public class QuoteService {
         quote.setUser_id(userId); // Set the logged-in user's ID
         quote.setQuote_number(quoteNumGeneratorService.generateQuoteNumber(quoteType));
         quote.setStatus(quoteStatus);
-        //System.out.println(quote);
 
         Quote savedQuote = quoteRepository.save(quote);
-
-        //System.out.print(savedQuote);
 
         for (ServicesQuoted serviceRequest : servicesQuotedList) {
             serviceRequest.setQuote_id(savedQuote);
@@ -160,5 +157,10 @@ public class QuoteService {
          throw new NotFoundException("No Quotes Found");
      }
      else return quotes;
+    }
+
+    public Quote getQuote(Long id)
+    {
+        return quoteRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote Not Found"));
     }
 }

@@ -2,6 +2,7 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.dto.UserDropownDTO;
 import com.example.invc_proj.exceptions.ApiResponse;
 import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.userLogin;
@@ -25,8 +26,8 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/users")
-    public ResponseEntity<ApiResponse<List<User>>> getUsers() {
-       return ApiResponses.ok(service.getUsers());
+    public ResponseEntity<ApiResponse<List<UserDropownDTO>>> getUsers() {
+       return ApiResponses.ok(service.getUsersDropdown());
    }
 
     @GetMapping("/users/{UserId}")
@@ -59,13 +60,6 @@ public class UserController {
         return ApiResponses.ok("user altered successfully");
     }
 
-   /* @PutMapping("/user")
-    public ResponseEntity<String> updatePassword(@RequestBody User user)
-    {
-        System.out.println("calling add user"+user);
-        service.alterUser(user);
-        return ResponseEntity.status(201).body("user altered successfully");
-    }*/
     @PutMapping("/update-password")
     public ResponseEntity<ApiResponse<String>> updatePassword(@RequestBody PasswordUpdateRequestDTO request, Principal principal)
     {

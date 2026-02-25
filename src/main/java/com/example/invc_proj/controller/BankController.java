@@ -42,21 +42,7 @@ public class BankController
         List<BankDropdownDTO> dbdto = service.getBankDropdown();
         return ApiResponses.ok(dbdto);
     }
-       /* List<BankDetails> bankDetailsList= service.getAllBankDetails();; // Retrieve data from your database
-        List<BankDropdownDTO> BankDetailsDD = new ArrayList<>();
 
-        for (BankDetails bankDetails : bankDetailsList)
-        {
-            BankDropdownDTO simplified = new BankDropdownDTO();
-            simplified.setBd_id(bankDetails.getBd_id());
-            simplified.setBank_name(bankDetails.getBank_name());
-            simplified.setAccount_no(bankDetails.getAccount_no());
-            simplified.setAccount_holder_name(bankDetails.getAccount_holder_name());
-            BankDetailsDD.add(simplified);
-        }
-
-        return BankDetailsDD;
-       */
     
     @GetMapping("/bankdetails/{id}")
     public ResponseEntity<ApiResponse<BankDetails>> getBankDetailsById(@PathVariable int id)
@@ -67,15 +53,12 @@ public class BankController
     }
 
 
-    //private static final Logger logger = LoggerFactory.getLogger(BankDetailsController.class);  // Logger initialization
 
     @PostMapping("/bankdetails")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> addBankDetails(@RequestBody BankDetailsDTO bnk)
     {
-            //logger.info("Received request to add bank details: {}", bnk);
             service.addBankDetails(bnk);  // Call the service to add bank details
-            //return ResponseEntity.status(HttpStatus.CREATED).body("Bank details added successfully.");
               return ApiResponses.created("Bank details added successfully.");
     }
 
@@ -85,8 +68,7 @@ public class BankController
     {
 
             service.deleteBankDetails(p_bank_id);
-            //return ResponseEntity.status(HttpStatus.OK).body("Bank Details Removed");
-              return ApiResponses.ok("Bank Details Removed");
+            return ApiResponses.ok("Bank Details Removed");
 
     }
 }

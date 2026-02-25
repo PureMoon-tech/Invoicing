@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidOldPasswordException.class)
-    public ResponseEntity<ApiError> handleInvalidOldPasswordException(IllegalArgumentException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleInvalidOldPasswordException(InvalidOldPasswordException ex, HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidPasswordLengthException.class)
-    public ResponseEntity<ApiError> handleInvalidPasswordLengthException(IllegalArgumentException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleInvalidPasswordLengthException(InvalidPasswordLengthException ex, HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad Request",
@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<ApiError> handleInvalidRefreshTokenException(RateLimiterException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex, HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.UNAUTHORIZED.value(),
                 "UNAUTHORIZED",
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFoundException(RateLimiterException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.NOT_FOUND.value(),
                 "NOT_FOUND",

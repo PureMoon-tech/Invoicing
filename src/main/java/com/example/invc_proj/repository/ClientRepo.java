@@ -24,7 +24,17 @@ public interface ClientRepo extends JpaRepository<Client, Integer>
 
    /* @Query("SELECT new com.example.invc_proj.dto.ClientDropdownDTO(c.client_id, c.client_name, c.client_type) " +
             "FROM Client c")
-    List<ClientDropdownDTO> findClientsForDropdown();*/
+    List<ClientDropdownDTO> findClientsForDropdown();
+
+    -- Trigram index for fast ILIKE search on name, mobile, email
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+CREATE INDEX idx_clients_name_trgm    ON clients USING GIN (client_name gin_trgm_ops);
+CREATE INDEX idx_clients_mobile_trgm  ON clients USING GIN (primary_mobile_number gin_trgm_ops);
+CREATE INDEX idx_clients_email_trgm   ON clients USING GIN (primary_email_id gin_trgm_ops);
+
+
+    */
 
     @Query("SELECT new com.example.invc_proj.dto.ClientDropdownDTO" +
             "(c.client_id, c.client_name, c.client_type) " +
@@ -42,5 +52,19 @@ public interface ClientRepo extends JpaRepository<Client, Integer>
             @Param("clientName") String clientName,
             Pageable pageable);
 
+
+    @Query(value = """
+            SELECT client_id, client_name, client_type
+            FROM clients
+            WHERE :q = ''
+               OR client_name ILIKE :pattern
+               OR primary_mobile_number ILIKE :pattern
+               OR primary_email_id ILIKE :pattern
+            ORDER BY client_name ASC
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<Object[]> searchForLov(@Param("q") String q,
+                                @Param("pattern") String pattern,
+                                @Param("limit") int limit);
 
 }

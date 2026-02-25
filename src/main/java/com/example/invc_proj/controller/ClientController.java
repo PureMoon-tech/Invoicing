@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -38,12 +39,7 @@ public class ClientController {
             return ApiResponses.ok(client);
     }
 
-   /* @GetMapping("/client/{ClientId}")
-    public ResponseEntity<ClientDTO> getClientDTOById(@PathVariable int ClientId) {
-        ClientDTO client = service.getClientDTOById(ClientId);
-        return ResponseEntity.ok(client);
-    }
-*/
+
     // Add a new client
     @PostMapping("/client")
     @PreAuthorize("hasRole('ADMIN')")
@@ -70,28 +66,19 @@ public class ClientController {
         return ApiResponses.ok("Client Removed Successfully");
     }
 
+    @GetMapping("/lov")
+    public ResponseEntity<Map<String, Object>> getLov(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer limit) {
 
+        List<ClientDropdownDTO> data = service.searchLov(q, limit);
 
-    /*@GetMapping("/clients")
-    public List<Client> getAllClients()
-    {
-        return service.getAllClients();
+        return ResponseEntity.ok(Map.of(
+                "data", data,
+                "count", data.size()
+        ));
     }
 
-@GetMapping("/clients/{id}")
-    public Optional<Client> getClientById(@PathVariable int id)
-    {
-        System.out.println("calling getClientById");
-        return service.getClientById(id);
-    }
 
-@PostMapping("/client")
-    public void addClients(@RequestBody Client clnt)
-    {
-        System.out.println("calling post");
-        System.out.println(clnt);
-        service.addClients(clnt);
-    }
 
-*/
 }

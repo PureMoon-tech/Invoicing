@@ -36,7 +36,7 @@ public class BankService {
 
     public BankDetails getBankDetailsById(int id)
     {
-        //System.out.println("get by id"+id);
+
         try{
             return repository_bnk.findById(id).orElseThrow(() -> new NotFoundException("Bank with ID " + id + " not found."));
         }

@@ -57,82 +57,10 @@ import java.util.List;
 
     private final CustomUserDetailsService CustomUserDetailsService;
 
-    //@Autowired
-   // private LicenseManager licenseManager;
-
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody AuthRequest request)
-//    {
-//        System.out.println(request);
-//        Authentication authentication = authManager.authenticate(
-//                new UsernamePasswordAuthenticationToken(
-//                        request.getUsername(),
-//                        request.getPassword()
-//                )
-//        );
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//
-//        List<String> roles = userDetails.getAuthorities()
-//                .stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .collect(Collectors.toList());
-//
-//        String token = jwtUtil.generateToken(request.getUsername(),roles);
-//
-//        return ResponseEntity.ok(new AuthResponse(token));
-//    }
-//
-/*
-@PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-    System.out.println(request);
-
-
-
-    // Step 1: Validate the license before authenticating the user
-   //if (!licenseManager.isLicenseValid()) {
-     //   return ResponseEntity.status(HttpStatus.FORBIDDEN)
-       //         .body("License validation failed: Expired or user limit exceeded.");
-    //}
-
-
-    Authentication authentication = authManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    request.getUsername(),
-                    request.getPassword()
-            )
-    );
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-    List<String> roles = userDetails.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.toList());
-
-    String token = jwtUtil.generateToken(request.getUsername(), roles);
-
-    // Step 2: Increment active user count after successful authentication
-   // licenseManager.incrementActiveUsers();
-
-    return ResponseEntity.ok(new AuthResponse(token));
-}
-*/
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request)
     {
-        //System.out.println(request);
-
-
-
-        // Step 1: Validate the license before authenticating the user
-       /* if (licenseManager.shouldCheckOnLogin()) {
-            try {
-                licenseManager.checkLicense();
-            } catch (Exception e) {
-                throw new RuntimeException("Login failed: " + e.getMessage(), e);
-            }
-        }*/
         HttpHeaders headers = new HttpHeaders();
         if (licenseManager.isExpired()) {
             headers.add("X-License-Status", "EXPIRED");
@@ -163,14 +91,11 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     .collect(Collectors.toList());
 
             String token = jwtUtil.generateToken(userPrincipal.getUsername(), userPrincipal.getUserId(),userPrincipal.getEmailId(),roles);
-            //System.out.println(token);
             UserPrincipalDTO userDTO = new UserPrincipalDTO(userPrincipal.getUsername(),userPrincipal.getUserId(),userPrincipal.getEmailId(),roles);
             String refreshToken = refreshTokenService.createRefreshToken(request.getUsername());
-            //System.out.println(refreshToken);
             // Step 2: Increment active user count after successful authentication
             // licenseManager.incrementActiveUsers();
 
-            //return ResponseEntity.ok(new AuthResponse(token,refreshToken));
             ResponseCookie accessTokenCookie = ResponseCookie
                     .from("ACCESS_TOKEN", token)
                     .httpOnly(true)
@@ -219,28 +144,6 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                     ));
         }
     }
-
-   /* @GetMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String tokenHeader) {
-        try {
-            if (tokenHeader == null || !tokenHeader.startsWith("Bearer ")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header");
-            }
-
-            String token = tokenHeader.substring(7); // Remove "Bearer " prefix
-            String username = jwtUtil.extractUsername(token);
-
-            // if (username != null && jwtUtil.isTokenValid(token,userName))
-            if (username != null && jwtUtil.isTokenValid(token)){
-                return ResponseEntity.ok("Token is valid");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
-                //throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token validation failed: " + e.getMessage());
-        }
-        */
 
 
     @PostMapping("/logout")
@@ -412,12 +315,7 @@ public ResponseEntity<?> login(@RequestBody AuthRequest request) {
                 .body(new RefreshResponse("Token refreshed"));
     }
 
-   /* @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshRequest req) {
-        refreshTokenService.revokeToken(req.getRefreshToken());
-        return ResponseEntity.ok("Logged out");
-    }
-*/
+
    private ResponseCookie createClearedCookie(String name) {
        System.out.println(name);
        return ResponseCookie.from(name, "")

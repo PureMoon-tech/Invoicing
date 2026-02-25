@@ -63,21 +63,6 @@ public class InvcController {
         return service.getCurrentFYTotal(p_client_Id);
     }
 
-     /*@PostMapping("/processInvoice")
-    public void processInvoice(Invc invc)
-     {
-         Prcs_invc.
-     }
-*/
 
-/*@PostMapping("/GenerateInvoice")
-    public void addServicesRequested(@RequestBody ServicesRequested invc)
-
-    {
-        System.out.println("calling post");
-        System.out.println(invc);
-        service.addServicesRequested(invc);
-    }
-*/
 
 }

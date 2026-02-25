@@ -135,16 +135,3 @@ public class ProductService {
       repository_srvc.deleteById(pServiceId);
     }
 }
-
-
-
-
-
-/*
-  @Autowired
-  private UserRepo repository_user;
-  public Optional<Login> getUserCredentials(int userId)
-  {
-    return repository_user.findById(userId);
-
-  }*/

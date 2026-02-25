@@ -38,7 +38,7 @@ public class InvoicePDFController {
     @GetMapping("/invoices/pdf")
     public ResponseEntity<byte[]> downloadPdf(@RequestBody Invoice invoice) {
         try {
-            // ✅ Fast async PDF generation with timeout
+            //  Fast async PDF generation with timeout
             byte[] pdf = pdfHandlerService.getInvoicePdfAsync(invoice)
                     .get(5, TimeUnit.SECONDS);
 

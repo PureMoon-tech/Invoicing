@@ -102,11 +102,10 @@ public class InvoiceService {
         invoice.setBank_id(bankId);
         invoice.setInvoice_number(invoiceNumGeneratorService.generateInvoiceNumber(invoiceType));
 
-        //System.out.println(invoice);
+
         // Save the invoice to the repository
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
-        //System.out.print(savedInvoice);
 
         // Now that the invoice is saved, updating the ServicesRequested list with the correct invoiceId
         //servicesRequestedList.forEach(serviceRequest -> serviceRequest.setInvoice_id(savedInvoice.getInvoice_id()));
@@ -283,6 +282,12 @@ public class InvoiceService {
     {
         List<InvoiceView> invoiceView = invoiceViewRepo.findAllInvoices();
         return invoiceView;
+    }
+
+    public Invoice getInvoice(Long invoice_id)
+    {
+        return  invoiceRepository.findById(invoice_id).
+            orElseThrow(()-> new RuntimeException("No invoice found for the invoice number"));
     }
 
     public Page<Invoice> searchInvoices(int clientId,

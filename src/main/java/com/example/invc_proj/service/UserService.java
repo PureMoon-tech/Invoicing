@@ -2,8 +2,10 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.dto.UserDropownDTO;
 import com.example.invc_proj.exceptions.InvalidOldPasswordException;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
+import com.example.invc_proj.mapper.UserDropdownDTOMapper;
 import com.example.invc_proj.model.AppRole;
 import com.example.invc_proj.model.User;
 import com.example.invc_proj.repository.RoleRepository;
@@ -20,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,15 +52,14 @@ public class UserService {
       return User_repo.findAll();
     }
 
-   /* public Optional<User> getUserById(int user_id)
+    public List<UserDropownDTO> getUsersDropdown()
     {
-        return User_repo.findById(user_id);
+        List<UserDropownDTO> userDropownDTO = new ArrayList<>();
+         List<User> users = User_repo.findAll();
+        userDropownDTO = UserDropdownDTOMapper.toDTOList(users);
+        return userDropownDTO;
     }
 
-    public Optional<User> getUserByName(String UserName)
-    {
-        return Optional.ofNullable(User_repo.findByUserName(UserName));
-    }*/
 
     public Optional<User> getUserById(int user_id)
     {
@@ -90,7 +92,6 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(rawPassword);
         NewUser.setPassword(encodedPassword);
-        //System.out.println(user.getPassword());
         //NewUser.setPasswordSalt(user.getPasswordSalt());
         NewUser.setPasswordSalt(rawPassword);
 
@@ -100,10 +101,7 @@ public class UserService {
         }
 
         NewUser.setEmailId(user.getEmailId());
-
-        //System.out.println(NewUser);
         User_repo.save(NewUser);
-        //System.out.println(NewUser);
         emailService.sendWelcomeEmail(NewUser.getEmailId(),NewUser.getUsername());
 
         return "User added successfully";
