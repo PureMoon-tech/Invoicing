@@ -1,7 +1,7 @@
 package com.example.invc_proj.mapper;
 
 import com.example.invc_proj.dto.ServicesDropdownDTO;
-import com.example.invc_proj.dto.UserDropownDTO;
+import com.example.invc_proj.dto.UserDropdownDTO;
 import com.example.invc_proj.model.Services;
 import com.example.invc_proj.model.User;
 
@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 public class UserDropdownDTOMapper {
 
-    public static UserDropownDTO toDTO(User user)
+    public static UserDropdownDTO toDTO(User user)
     {
         if(user==null)
             return null;
 
-        UserDropownDTO dto = new UserDropownDTO();
+        UserDropdownDTO dto = new UserDropdownDTO();
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -28,7 +28,7 @@ public class UserDropdownDTOMapper {
 
     }
 
-    public static List<UserDropownDTO> toDTOList(List<User> users) {
+    public static List<UserDropdownDTO> toDTOList(List<User> users) {
         if (users == null) {
             return Collections.emptyList();
         }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDropownDTO {
+public class UserDropdownDTO {
         private Integer id;
         private String username;
         private String firstName;

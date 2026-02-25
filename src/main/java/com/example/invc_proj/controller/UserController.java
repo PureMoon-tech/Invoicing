@@ -2,7 +2,7 @@ package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
-import com.example.invc_proj.dto.UserDropownDTO;
+import com.example.invc_proj.dto.UserDropdownDTO;
 import com.example.invc_proj.exceptions.ApiResponse;
 import com.example.invc_proj.exceptions.ApiResponses;
 import com.example.invc_proj.model.userLogin;
@@ -26,7 +26,7 @@ public class UserController {
     private UserService service;
 
     @GetMapping("/users")
-    public ResponseEntity<ApiResponse<List<UserDropownDTO>>> getUsers() {
+    public ResponseEntity<ApiResponse<List<UserDropdownDTO>>> getUsers() {
        return ApiResponses.ok(service.getUsersDropdown());
    }
 

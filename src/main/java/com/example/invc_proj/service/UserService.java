@@ -2,6 +2,7 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.dto.UserDropdownDTO;
 import com.example.invc_proj.dto.UserDropownDTO;
 import com.example.invc_proj.exceptions.InvalidOldPasswordException;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
@@ -52,9 +53,9 @@ public class UserService {
       return User_repo.findAll();
     }
 
-    public List<UserDropownDTO> getUsersDropdown()
+    public List<UserDropdownDTO> getUsersDropdown()
     {
-        List<UserDropownDTO> userDropownDTO = new ArrayList<>();
+        List<UserDropdownDTO> userDropownDTO = new ArrayList<>();
          List<User> users = User_repo.findAll();
         userDropownDTO = UserDropdownDTOMapper.toDTOList(users);
         return userDropownDTO;
