@@ -39,7 +39,6 @@ public class Quote {
     private QuoteStatus status;
 
     @OneToMany(mappedBy = "quote_id", cascade = CascadeType.ALL)
-    //@JsonIgnore
     private List<ServicesQuoted> quoteSrvcs;
 
 }

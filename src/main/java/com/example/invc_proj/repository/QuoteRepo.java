@@ -20,5 +20,4 @@ public interface QuoteRepo extends JpaRepository<Quote,Long> {
     List<Quote> findAllByStatus( QuoteStatus p_quote_status);
 
 
-
 }

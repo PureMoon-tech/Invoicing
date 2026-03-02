@@ -1,7 +1,9 @@
 package com.example.invc_proj.service;
 
+import com.example.invc_proj.dto.QuoteResponseDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.exceptions.NotFoundException;
+import com.example.invc_proj.mapper.QuoteResponseDTOMapper;
 import com.example.invc_proj.model.*;
 import com.example.invc_proj.model.Enum.QuoteStatus;
 import com.example.invc_proj.model.Enum.QuoteType;
@@ -140,7 +142,7 @@ public class QuoteService {
     }
 
 
-    public List<Quote> getAllQuotes(QuoteStatus quote_status)
+    public List<QuoteResponseDTO> getAllQuotes(QuoteStatus quote_status)
     {
         // Fetch all quotes from the repository
         // Filter out only the active quotes
@@ -156,11 +158,15 @@ public class QuoteService {
      {
          throw new NotFoundException("No Quotes Found");
      }
-     else return quotes;
+     else return QuoteResponseDTOMapper.toDTOList(quotes);
     }
 
-    public Quote getQuote(Long id)
+    public QuoteResponseDTO getQuote(Long id)
     {
-        return quoteRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote Not Found"));
+        Quote quote = quoteRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote Not Found"));
+        return QuoteResponseDTOMapper.toDTO(quote);
     }
+
+
+
 }

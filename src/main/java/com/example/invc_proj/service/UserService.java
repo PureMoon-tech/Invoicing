@@ -3,7 +3,6 @@ package com.example.invc_proj.service;
 import com.example.invc_proj.dto.PasswordUpdateRequestDTO;
 import com.example.invc_proj.dto.UserDTO;
 import com.example.invc_proj.dto.UserDropdownDTO;
-import com.example.invc_proj.dto.UserDropownDTO;
 import com.example.invc_proj.exceptions.InvalidOldPasswordException;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.mapper.UserDropdownDTOMapper;

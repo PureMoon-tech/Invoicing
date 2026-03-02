@@ -1,6 +1,7 @@
 package com.example.invc_proj.controller;
 
 import com.example.invc_proj.dto.QuoteRequestDTO;
+import com.example.invc_proj.dto.QuoteResponseDTO;
 import com.example.invc_proj.dto.ServiceCostRequest;
 import com.example.invc_proj.model.Enum.QuoteStatus;
 import com.example.invc_proj.model.Enum.QuoteType;
@@ -51,16 +52,16 @@ public class QuoteController {
 
 
     @GetMapping("/quotes/{p_quote_status}")
-    public ResponseEntity<List<Quote>> getAllQuotes(@PathVariable QuoteStatus p_quote_status)
+    public ResponseEntity<List<QuoteResponseDTO>> getAllQuotes(@PathVariable QuoteStatus p_quote_status)
     {
-        List<Quote> quotes = service.getAllQuotes(p_quote_status);
+        List<QuoteResponseDTO> quotes = service.getAllQuotes(p_quote_status);
         return ResponseEntity.ok().body(quotes);
     }
 
-    @GetMapping("/quotes/{p_quote_id}")
-    public ResponseEntity<Quote> getQuote(@PathVariable Long p_quote_id)
+    @GetMapping("/quote/{p_quote_id}")
+    public ResponseEntity<QuoteResponseDTO> getQuote(@PathVariable Long p_quote_id)
     {
-        Quote quote = service.getQuote(p_quote_id);
+        QuoteResponseDTO quote = service.getQuote(p_quote_id);
         return ResponseEntity.ok().body(quote);
     }
 
