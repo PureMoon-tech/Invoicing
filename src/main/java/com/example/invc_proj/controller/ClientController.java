@@ -48,14 +48,12 @@ public class ClientController {
         return ApiResponses.created("Client added successfully");
     }
 
-    // Update an existing client
-    @PutMapping("/client")
+
+    @PatchMapping("/client")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<String>> alterClient(@RequestBody Client client)
+    public ResponseEntity<ApiResponse<String>> alterClient(@RequestBody ClientDTO clientDTO)
     {
-        Client existingClient = service.getClientById(client.getClient_id());
-        service.updateClient(client);  // Rename to updateClient if necessary
-        return ApiResponses.ok("Client updated successfully");
+        return ApiResponses.ok(service.updateClient(clientDTO));
     }
 
     @DeleteMapping("/client/{p_client_id}")

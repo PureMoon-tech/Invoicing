@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ClientDTO {
-
+    private int client_id;
     private String client_name;
     private String client_type;
     private String primary_mobile_number;
@@ -25,10 +25,11 @@ public class ClientDTO {
     private String pincode;
 
 
-    public ClientDTO(String client_name, String client_type, String primary_mobile_number,String primary_email_id,
+    public ClientDTO(int client_id,String client_name, String client_type, String primary_mobile_number,String primary_email_id,
                      String secondary_mobile_number,String secondary_email_id, String occupation, String pan_no,
                      String GSTN, String aadhaar_no, String address, String pincode, String accountNumber, String upiId)
     {
+        this.client_id = client_id;
         this.client_name = client_name;
         this.client_type = client_type;
         this.primary_mobile_number = primary_mobile_number;

@@ -47,23 +47,28 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<ApiResponse<String>> addUser(@RequestBody UserDTO user)
     {
-        //System.out.println("calling add user"+user);
         return ApiResponses.created(service.addUser(user));
-        //return ResponseEntity.status(201).body("user added successfully");
+
     }
 
-    @PutMapping("/users")
-    public ResponseEntity<ApiResponse<String>> alterUser(@RequestBody User user)
+    @PatchMapping("/users")
+    public ResponseEntity<ApiResponse<String>> alterUser(@RequestBody UserDTO user)
     {
-        //System.out.println("calling add user"+user);
-        service.alterUser(user);
-        return ApiResponses.ok("user altered successfully");
+
+        return ApiResponses.ok(service.alterUser(user));
     }
 
-    @PutMapping("/update-password")
+    @PatchMapping("/update-password")
     public ResponseEntity<ApiResponse<String>> updatePassword(@RequestBody PasswordUpdateRequestDTO request, Principal principal)
     {
         return ApiResponses.ok(service.updatePassword(request,principal));
+    }
+
+    @DeleteMapping("/users/{UserId}")
+    public ResponseEntity<ApiResponse<String>> removeUserById(@PathVariable int UserId)
+    {
+
+        return ApiResponses.ok(service.removeUserById(UserId));
     }
 
 }

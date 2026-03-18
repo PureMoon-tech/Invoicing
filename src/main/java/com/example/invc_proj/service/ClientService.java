@@ -110,8 +110,6 @@ public class ClientService {
     // Get full client details by ID
     public Client getClientById(int clientId) {
 
-        //return clientRepo.findById(clientId);
-
         Client client = clientRepo.findById(clientId)
                 .orElseThrow(() -> new NotFoundException("Client not found"));
         return client;
@@ -152,4 +150,11 @@ public class ClientService {
     }
 
 
+    public String updateClient(ClientDTO clientDTO) {
+
+        Client updatingClient = clientRepo.findById(clientDTO.getClient_id()).orElseThrow(() -> new NotFoundException("Client not found"));
+        ClientDTOMapper.updateEntityFromDto(clientDTO,updatingClient);
+        clientRepo.save(updatingClient);
+        return "Client Details Updated Successfully";
+    }
 }

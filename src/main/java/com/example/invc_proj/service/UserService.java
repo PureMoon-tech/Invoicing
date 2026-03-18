@@ -5,6 +5,7 @@ import com.example.invc_proj.dto.UserDTO;
 import com.example.invc_proj.dto.UserDropdownDTO;
 import com.example.invc_proj.exceptions.InvalidOldPasswordException;
 import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
+import com.example.invc_proj.mapper.UserDTOMapper;
 import com.example.invc_proj.mapper.UserDropdownDTOMapper;
 import com.example.invc_proj.model.AppRole;
 import com.example.invc_proj.model.User;
@@ -34,16 +35,18 @@ public class UserService {
     private final UserRepo User_repo;
     private final RoleRepository role_repo;
     private final EmailService emailService;
+    private final UserDTOMapper userDTOMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo User_repo,RoleRepository role_repo, EmailService emailService)
+    public UserService(UserRepo User_repo,RoleRepository role_repo, EmailService emailService, UserDTOMapper userDTOMapper)
     {
      this.User_repo = User_repo;
      this.role_repo = role_repo;
      this.emailService = emailService;
+     this.userDTOMapper = userDTOMapper;
         //this.userRepository = userRepository;
     }
 
@@ -87,7 +90,6 @@ public class UserService {
         //Validate password strength method needs to added and few more validators, to have strong password
         if (user.getPassword().length() < 8)
         {
-            //return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
             throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
         }
         String encodedPassword = passwordEncoder.encode(rawPassword);
@@ -96,7 +98,6 @@ public class UserService {
         NewUser.setPasswordSalt(rawPassword);
 
         if(User_repo.existsByEmailId(user.getEmailId())) {
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
             throw new RuntimeException("Email Id Already Exists");
         }
 
@@ -130,19 +131,28 @@ public class UserService {
     }
 
 
-    public void alterUser(User user)
+    public String alterUser(UserDTO user)
     {
+        User updatingUser = User_repo.findByUsername(user.getUsername())
+                                     .orElseThrow(() -> new RuntimeException("User not found"));
+
         //Validate password strength method needs to added and few more validators, to have strong password
         if (user.getPassword().length() < 8)
         {
             //return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
             throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
         }
+
+
+
         if(User_repo.existsByEmailId(user.getEmailId())) {
             //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
             throw new RuntimeException("Email Id Already Exists");
         }
-        User_repo.save(user);
+        userDTOMapper.updateEntityFromDto(user, updatingUser);
+        User_repo.save(updatingUser);
+
+        return "user details updated successfully";
     }
 
 
@@ -174,4 +184,10 @@ public class UserService {
         return "Password updated successfully";
     }
 
+    public String removeUserById(int userId)
+    {
+        User user = User_repo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User_repo.deleteById(userId);
+        return "user removed successfully";
+    }
 }
