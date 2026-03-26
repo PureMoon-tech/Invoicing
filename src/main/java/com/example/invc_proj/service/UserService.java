@@ -47,7 +47,6 @@ public class UserService {
      this.role_repo = role_repo;
      this.emailService = emailService;
      this.userDTOMapper = userDTOMapper;
-        //this.userRepository = userRepository;
     }
 
     public List<User> getUsers()
@@ -72,8 +71,8 @@ public class UserService {
 
     public Optional<User> getUserByName(String UserName)
     {
-        System.out.println("UserName: "+UserName);
-        return Optional.ofNullable(User_repo.findByUsername(UserName).orElseThrow(() -> new RuntimeException("User not found")));
+        return Optional.ofNullable(User_repo.findByUsername(UserName)
+                                            .orElseThrow(() -> new RuntimeException("User not found")));
 
     }
 
@@ -83,7 +82,8 @@ public class UserService {
         NewUser.setUsername(user.getUsername());
         NewUser.setFirstName(user.getFirstName());
         NewUser.setLastName(user.getLastName());
-        AppRole role = role_repo.findById(user.getRole_id()).orElseThrow(() ->new RuntimeException("Role Not Found"));
+        AppRole role = role_repo.findById(user.getRole_id())
+                                              .orElseThrow(() ->new RuntimeException("Role Not Found"));
         NewUser.setRole(role);
         NewUser.setStatus(user.getStatus());
         String rawPassword = user.getPassword();
@@ -110,7 +110,6 @@ public class UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder2;
-    //private final User_repo userRepository;
 
     public void encryptExistingPasswords()
     {
@@ -135,18 +134,16 @@ public class UserService {
     {
         User updatingUser = User_repo.findByUsername(user.getUsername())
                                      .orElseThrow(() -> new RuntimeException("User not found"));
-
         //Validate password strength method needs to added and few more validators, to have strong password
-        if (user.getPassword().length() < 8)
+       /* if (user.getPassword().length() < 8)
         {
             //return ResponseEntity.badRequest().body("Password must be at least 8 characters long");
             throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
         }
-
+        moved to mapper*/
 
 
         if(User_repo.existsByEmailId(user.getEmailId())) {
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already in use");
             throw new RuntimeException("Email Id Already Exists");
         }
         userDTOMapper.updateEntityFromDto(user, updatingUser);
@@ -157,7 +154,6 @@ public class UserService {
 
 
     public String updatePassword(PasswordUpdateRequestDTO request, Principal principal){
-        //User user = User_repo.findByUserName(principal.getName());
 
         User user = User_repo.findByUsername(principal.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));

@@ -1,10 +1,10 @@
-package com.example.invc_proj.service;
+package com.example.invc_proj.filter;
 
 
 import com.example.invc_proj.model.ActivityLog;
 import com.example.invc_proj.model.AuditLog;
-import com.example.invc_proj.repository.ActvityLogRepo;
-import com.example.invc_proj.repository.AudtiLogRepo;
+import com.example.invc_proj.repository.ActivityLogRepo;
+import com.example.invc_proj.repository.AuditLogRepo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,8 +27,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Enumeration;
-import java.util.concurrent.ThreadPoolExecutor;
-
+/*
 @Component
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE + 10)
@@ -36,8 +35,8 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(ApiLoggingFilter.class);
 
 
-    private final ActvityLogRepo activityLogRepository;
-    private final AudtiLogRepo auditLogRepository;
+    private final ActivityLogRepo activityLogRepository;
+    private final AuditLogRepo auditLogRepository;
     private final TaskExecutor taskExecutor;
 
     @Override
@@ -215,4 +214,8 @@ public class ApiLoggingFilter extends OncePerRequestFilter {
                 path.contains("/favicon.ico") ||
                 path.contains("/error");
     }
+
+
 }
+
+ */

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ActvityLogRepo extends JpaRepository<ActivityLog, Long> {
+public interface ActivityLogRepo extends JpaRepository<ActivityLog, Long> {
 
 }

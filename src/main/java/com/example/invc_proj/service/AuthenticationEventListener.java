@@ -2,7 +2,7 @@ package com.example.invc_proj.service;
 
 import com.example.invc_proj.model.AuditLog;
 import com.example.invc_proj.model.UserPrincipal;
-import com.example.invc_proj.repository.AudtiLogRepo;
+import com.example.invc_proj.repository.AuditLogRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -58,7 +58,7 @@ import java.time.LocalDateTime;
     public class AuthenticationEventListener {
 
         @Autowired
-        private AudtiLogRepo auditLogRepository;
+        private AuditLogRepo auditLogRepository;
 
         @EventListener
         @Async

@@ -6,7 +6,7 @@ import com.example.invc_proj.exceptions.InvalidRefreshTokenException;
 import com.example.invc_proj.license.LicenseManager;
 import com.example.invc_proj.model.AuditLog;
 import com.example.invc_proj.model.UserPrincipal;
-import com.example.invc_proj.repository.AudtiLogRepo;
+import com.example.invc_proj.repository.AuditLogRepo;
 import com.example.invc_proj.security.CustomUserDetailsService;
 import com.example.invc_proj.security.JwtUtil;
 import com.example.invc_proj.security.RefreshTokenService;
@@ -48,7 +48,7 @@ import java.util.List;
     private JwtUtil jwtUtil;
 
     @Autowired
-    private AudtiLogRepo audtiLogRepo;
+    private AuditLogRepo audtiLogRepo;
 
     @Autowired
     private LicenseManager licenseManager;

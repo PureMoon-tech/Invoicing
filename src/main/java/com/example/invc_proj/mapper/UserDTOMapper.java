@@ -1,9 +1,11 @@
 package com.example.invc_proj.mapper;
 
 import com.example.invc_proj.dto.UserDTO;
+import com.example.invc_proj.exceptions.InvalidPasswordLengthException;
 import com.example.invc_proj.model.User;
 import com.example.invc_proj.repository.AppRoleRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,6 +13,9 @@ public class UserDTOMapper {
 
     @Autowired
     private AppRoleRepo appRoleRepo;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
         public User toEntity(UserDTO dto) {
             if (dto == null) {
@@ -53,6 +58,14 @@ public class UserDTOMapper {
             }
             if (dto.getStatus() != null) {
                 entity.setStatus(dto.getStatus());
+            }
+            if (dto.getPassword() != null)
+            {
+                if (dto.getPassword().length() < 8)
+                {
+                    throw new InvalidPasswordLengthException("Password must be at least 8 characters long");
+                }
+                entity.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
 
         }
